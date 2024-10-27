@@ -1,10 +1,17 @@
+using Microsoft.EntityFrameworkCore;
 using MudBlazor.Services;
 using SeasonOfGhosts.Components;
+using SeasonOfGhosts.Db;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add MudBlazor services
 builder.Services.AddMudServices();
+
+builder.Services.AddDbContextFactory<SeasonContext>(x =>
+{
+    x.UseNpgsql(builder.Configuration.GetConnectionString("Default"));
+});
 
 // Add services to the container.
 builder.Services.AddRazorComponents()

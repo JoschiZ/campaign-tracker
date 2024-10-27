@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("SeasonOfGhosts")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+7086d09109fd8f1087293aea630e743227630420")]
 [assembly: System.Reflection.AssemblyProductAttribute("SeasonOfGhosts")]
 [assembly: System.Reflection.AssemblyTitleAttribute("SeasonOfGhosts")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

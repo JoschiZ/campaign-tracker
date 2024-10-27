@@ -43,9 +43,35 @@
         "net8.0": {
           "targetAlias": "net8.0",
           "dependencies": {
+            "Microsoft.EntityFrameworkCore.Design": {
+              "include": "Runtime, Build, Native, ContentFiles, Analyzers, BuildTransitive",
+              "suppressParent": "All",
+              "target": "Package",
+              "version": "[8.0.10, )"
+            },
             "MudBlazor": {
               "target": "Package",
               "version": "[7.*, )"
+            },
+            "Npgsql.EntityFrameworkCore.PostgreSQL": {
+              "target": "Package",
+              "version": "[8.0.10, )"
+            },
+            "Serilog.Sinks.Console": {
+              "target": "Package",
+              "version": "[6.0.0, )"
+            },
+            "Serilog.Sinks.Debug": {
+              "target": "Package",
+              "version": "[3.0.0, )"
+            },
+            "StronglyTypedId": {
+              "target": "Package",
+              "version": "[1.0.0-beta08, )"
+            },
+            "StronglyTypedId.Templates": {
+              "target": "Package",
+              "version": "[1.0.0-beta08, )"
             }
           },
           "imports": [

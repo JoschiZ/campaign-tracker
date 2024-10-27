@@ -21,6 +21,78 @@ build_property.GenerateRazorMetadataSourceChecksumAttributes =
 build_property.MSBuildProjectDirectory = /home/joschi/RiderProjects/SeasonOfGhosts
 build_property._RazorSourceGeneratorDebug = 
 
+[/home/joschi/.nuget/packages/stronglytypedid.templates/1.0.0-beta08/build/AdditionalFiles/guid-dapper.typedid]
+build_metadata.AdditionalFiles.TargetPath = 
+build_metadata.AdditionalFiles.CssScope = 
+
+[/home/joschi/.nuget/packages/stronglytypedid.templates/1.0.0-beta08/build/AdditionalFiles/guid-efcore.typedid]
+build_metadata.AdditionalFiles.TargetPath = 
+build_metadata.AdditionalFiles.CssScope = 
+
+[/home/joschi/.nuget/packages/stronglytypedid.templates/1.0.0-beta08/build/AdditionalFiles/guid-full.typedid]
+build_metadata.AdditionalFiles.TargetPath = 
+build_metadata.AdditionalFiles.CssScope = 
+
+[/home/joschi/.nuget/packages/stronglytypedid.templates/1.0.0-beta08/build/AdditionalFiles/guid-newtonsoftjson.typedid]
+build_metadata.AdditionalFiles.TargetPath = 
+build_metadata.AdditionalFiles.CssScope = 
+
+[/home/joschi/.nuget/packages/stronglytypedid.templates/1.0.0-beta08/build/AdditionalFiles/int-dapper.typedid]
+build_metadata.AdditionalFiles.TargetPath = 
+build_metadata.AdditionalFiles.CssScope = 
+
+[/home/joschi/.nuget/packages/stronglytypedid.templates/1.0.0-beta08/build/AdditionalFiles/int-efcore.typedid]
+build_metadata.AdditionalFiles.TargetPath = 
+build_metadata.AdditionalFiles.CssScope = 
+
+[/home/joschi/.nuget/packages/stronglytypedid.templates/1.0.0-beta08/build/AdditionalFiles/int-full.typedid]
+build_metadata.AdditionalFiles.TargetPath = 
+build_metadata.AdditionalFiles.CssScope = 
+
+[/home/joschi/.nuget/packages/stronglytypedid.templates/1.0.0-beta08/build/AdditionalFiles/int-newtonsoftjson.typedid]
+build_metadata.AdditionalFiles.TargetPath = 
+build_metadata.AdditionalFiles.CssScope = 
+
+[/home/joschi/.nuget/packages/stronglytypedid.templates/1.0.0-beta08/build/AdditionalFiles/long-dapper.typedid]
+build_metadata.AdditionalFiles.TargetPath = 
+build_metadata.AdditionalFiles.CssScope = 
+
+[/home/joschi/.nuget/packages/stronglytypedid.templates/1.0.0-beta08/build/AdditionalFiles/long-efcore.typedid]
+build_metadata.AdditionalFiles.TargetPath = 
+build_metadata.AdditionalFiles.CssScope = 
+
+[/home/joschi/.nuget/packages/stronglytypedid.templates/1.0.0-beta08/build/AdditionalFiles/long-full.typedid]
+build_metadata.AdditionalFiles.TargetPath = 
+build_metadata.AdditionalFiles.CssScope = 
+
+[/home/joschi/.nuget/packages/stronglytypedid.templates/1.0.0-beta08/build/AdditionalFiles/long-newtonsoftjson.typedid]
+build_metadata.AdditionalFiles.TargetPath = 
+build_metadata.AdditionalFiles.CssScope = 
+
+[/home/joschi/.nuget/packages/stronglytypedid.templates/1.0.0-beta08/build/AdditionalFiles/newid-full.typedid]
+build_metadata.AdditionalFiles.TargetPath = 
+build_metadata.AdditionalFiles.CssScope = 
+
+[/home/joschi/.nuget/packages/stronglytypedid.templates/1.0.0-beta08/build/AdditionalFiles/nullablestring-full.typedid]
+build_metadata.AdditionalFiles.TargetPath = 
+build_metadata.AdditionalFiles.CssScope = 
+
+[/home/joschi/.nuget/packages/stronglytypedid.templates/1.0.0-beta08/build/AdditionalFiles/string-dapper.typedid]
+build_metadata.AdditionalFiles.TargetPath = 
+build_metadata.AdditionalFiles.CssScope = 
+
+[/home/joschi/.nuget/packages/stronglytypedid.templates/1.0.0-beta08/build/AdditionalFiles/string-efcore.typedid]
+build_metadata.AdditionalFiles.TargetPath = 
+build_metadata.AdditionalFiles.CssScope = 
+
+[/home/joschi/.nuget/packages/stronglytypedid.templates/1.0.0-beta08/build/AdditionalFiles/string-full.typedid]
+build_metadata.AdditionalFiles.TargetPath = 
+build_metadata.AdditionalFiles.CssScope = 
+
+[/home/joschi/.nuget/packages/stronglytypedid.templates/1.0.0-beta08/build/AdditionalFiles/string-newtonsoftjson.typedid]
+build_metadata.AdditionalFiles.TargetPath = 
+build_metadata.AdditionalFiles.CssScope = 
+
 [/home/joschi/RiderProjects/SeasonOfGhosts/Components/App.razor]
 build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50cy9BcHAucmF6b3I=
 build_metadata.AdditionalFiles.CssScope = 
