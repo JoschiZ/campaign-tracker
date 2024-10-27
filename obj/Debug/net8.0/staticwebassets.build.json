@@ -1,0 +1,77 @@
+{
+  "Version": 1,
+  "Hash": "aL9lPhEYQuhaU/rPvvzxYNDjRSDb/qY8zDxg9E8yIdM=",
+  "Source": "SeasonOfGhosts",
+  "BasePath": "_content/SeasonOfGhosts",
+  "Mode": "Default",
+  "ManifestType": "Build",
+  "ReferencedProjectsConfiguration": [],
+  "DiscoveryPatterns": [
+    {
+      "Name": "SeasonOfGhosts/wwwroot",
+      "Source": "SeasonOfGhosts",
+      "ContentRoot": "/home/joschi/RiderProjects/SeasonOfGhosts/wwwroot/",
+      "BasePath": "_content/SeasonOfGhosts",
+      "Pattern": "**"
+    }
+  ],
+  "Assets": [
+    {
+      "Identity": "/home/joschi/.nuget/packages/mudblazor/7.14.0/staticwebassets/MudBlazor.min.css",
+      "SourceId": "MudBlazor",
+      "SourceType": "Package",
+      "ContentRoot": "/home/joschi/.nuget/packages/mudblazor/7.14.0/staticwebassets/",
+      "BasePath": "_content/MudBlazor",
+      "RelativePath": "MudBlazor.min.css",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "AssetMergeBehavior": "",
+      "AssetMergeSource": "",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "/home/joschi/.nuget/packages/mudblazor/7.14.0/staticwebassets/MudBlazor.min.css"
+    },
+    {
+      "Identity": "/home/joschi/.nuget/packages/mudblazor/7.14.0/staticwebassets/MudBlazor.min.js",
+      "SourceId": "MudBlazor",
+      "SourceType": "Package",
+      "ContentRoot": "/home/joschi/.nuget/packages/mudblazor/7.14.0/staticwebassets/",
+      "BasePath": "_content/MudBlazor",
+      "RelativePath": "MudBlazor.min.js",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "AssetMergeBehavior": "",
+      "AssetMergeSource": "",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "/home/joschi/.nuget/packages/mudblazor/7.14.0/staticwebassets/MudBlazor.min.js"
+    },
+    {
+      "Identity": "/home/joschi/RiderProjects/SeasonOfGhosts/wwwroot/favicon.ico",
+      "SourceId": "SeasonOfGhosts",
+      "SourceType": "Discovered",
+      "ContentRoot": "/home/joschi/RiderProjects/SeasonOfGhosts/wwwroot/",
+      "BasePath": "_content/SeasonOfGhosts",
+      "RelativePath": "favicon.ico",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "AssetMergeBehavior": "PreferTarget",
+      "AssetMergeSource": "",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot/favicon.ico"
+    }
+  ]
+}
