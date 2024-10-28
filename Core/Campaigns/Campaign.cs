@@ -17,4 +17,5 @@ internal sealed class Campaign
     public List<Settlement> Settlements { get; init; } = [];
     public List<Stat> Stats { get; init; } = [];
     public List<Faction> Factions { get; set; } = [];
+    public Settlement? MainSettlement { get; set; }
 }

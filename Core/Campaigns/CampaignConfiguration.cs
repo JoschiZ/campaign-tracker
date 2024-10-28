@@ -17,5 +17,6 @@ internal sealed class CampaignConfiguration : IEntityTypeConfiguration<Campaign>
         builder.HasMany(x => x.Settlements).WithOne(x => x.Campaign);
         builder.HasMany(x => x.Stats).WithOne(x => x.Campaign);
         builder.HasMany(x => x.Factions).WithOne(x => x.Campaign);
+        builder.HasOne(x => x.MainSettlement);
     }
 }
