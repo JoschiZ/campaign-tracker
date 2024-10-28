@@ -2,3 +2,4 @@ secret.appsettings.json
 secret.appsettings*
 bin
 obj
+.idea
