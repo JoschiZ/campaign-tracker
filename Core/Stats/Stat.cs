@@ -1,6 +1,8 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using MudBlazor;
 using SeasonOfGhosts.Core.Campaigns;
+using SeasonOfGhosts.Db;
 using StronglyTypedIds;
 
 namespace SeasonOfGhosts.Core.Stats;
@@ -9,9 +11,28 @@ internal sealed class Stat
 {
     public StatId Id { get; init; }
     public required string Name { get; init; }
-    public int Value { get; init; }
+    public int Value { get; private set; }
     public required Campaign Campaign { get; init; }
     public List<StatLog> Log { get; init; } = [];
+
+    public async Task<StatLog> ChangeStatAsync(int delta, string reason, SeasonContext context)
+    {
+        var log = new StatLog()
+        {
+            Delta = delta,
+            Reason = reason,
+            Stat = this
+        };
+        
+        context.Attach(this);
+        
+        Value += delta;
+        Log.Add(log);
+        
+        await context.SaveChangesAsync();
+
+        return log;
+    }
 }
 
 internal sealed class StatConfiguration: IEntityTypeConfiguration<Stat>
