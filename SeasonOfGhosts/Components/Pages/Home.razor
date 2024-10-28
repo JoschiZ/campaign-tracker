@@ -1,13 +1,27 @@
 ﻿@page "/"
 @using SeasonOfGhosts.Core.Campaigns
+@inject IJsApiService JsService
+@inject ISnackbar Snackbar
 
 <PageTitle>@Campaign.Name</PageTitle>
 
-<MudText Typo="Typo.h1">@Campaign.Name <MudText Inline Typo="Typo.subtitle1">(@Campaign.Code)</MudText></MudText>
+<MudText Typo="Typo.h5">@Campaign.Name</MudText>
+<MudText Inline Typo="Typo.subtitle1">Share Code: <MudButton OnClick="() => CopyToClipboard(Campaign.Code)" Variant="Variant.Text">@Campaign.Code</MudButton></MudText>
 
+<MudGrid>
+    <MudItem xs="6" md="4">Characters</MudItem>
+    <MudItem xs="6" md="4">Stats</MudItem>
+    <MudItem xs="6" md="4">Factions</MudItem>
+    <MudItem xs="6" md="4">Settlements</MudItem>
+</MudGrid>
 @code{
 
     [CascadingParameter]
     public required Campaign Campaign { get; set; }
 
+    private async Task CopyToClipboard(string content)
+    {
+        await JsService.CopyToClipboardAsync(content);
+        Snackbar.Add("Copied!");
+    }
 }
