@@ -17,7 +17,7 @@ public sealed class CreationInterceptor : SaveChangesInterceptor
 
         foreach (var entity in entities)
         {
-            entity.Property(x => x.CreatedAt).CurrentValue = DateTime.Now;
+            entity.Property(x => x.CreatedAt).CurrentValue = DateTime.UtcNow;
         }
         
         return base.SavingChangesAsync(eventData, result, cancellationToken);

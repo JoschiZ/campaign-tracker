@@ -31,13 +31,19 @@ internal sealed class SeasonContext : DbContext
         configurationBuilder.Properties<FactionId>().HaveConversion<FactionId.EfCoreValueConverter>();
         configurationBuilder.Properties<StatId>().HaveConversion<StatId.EfCoreValueConverter>();
         configurationBuilder.Properties<StatLogId>().HaveConversion<StatLogId.EfCoreValueConverter>();
+        configurationBuilder.Properties<FactionLogId>().HaveConversion<FactionLogId.EfCoreValueConverter>();
+
+        
         base.ConfigureConventions(configurationBuilder);
     }
 
-    private DbSet<Character> Characters { get; set; }
-    public DbSet<Campaign> Campaigns { get; set; }
-    private DbSet<Settlement> Settlements { get; set; }
-    private DbSet<Stat> Stats { get; set; }
-    private DbSet<Faction> Factions { get; set; }
-    private DbSet<StatLog> StatLogs { get; set; }
+    // ReSharper disable UnassignedGetOnlyAutoProperty
+    private DbSet<Character> Characters { get; }
+    public DbSet<Campaign> Campaigns { get; }
+    private DbSet<Settlement> Settlements { get; }
+    private DbSet<Stat> Stats { get; }
+    private DbSet<Faction> Factions { get;  }
+    private DbSet<StatLog> StatLogs { get;  }
+    private DbSet<FactionLog> FactionLogs { get; }
+    // ReSharper restore UnassignedGetOnlyAutoProperty
 }
