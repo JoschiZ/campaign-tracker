@@ -1,4 +1,8 @@
 ﻿@page "/"
+@using Microsoft.EntityFrameworkCore
+@using SeasonOfGhosts.Db
+
+@inject IDbContextFactory<SeasonContext> ContextFactory
 
 <PageTitle>Home</PageTitle>
 
@@ -56,3 +60,11 @@
         More details
     </MudLink>
 </MudText>
+
+@code
+{
+    protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+    }
+}

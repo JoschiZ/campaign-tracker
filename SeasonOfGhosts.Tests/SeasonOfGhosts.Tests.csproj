@@ -21,7 +21,7 @@
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\..\SeasonOfGhosts\SeasonOfGhosts.csproj" />
+      <ProjectReference Include="..\SeasonOfGhosts\SeasonOfGhosts.csproj" />
     </ItemGroup>
 
     <ItemGroup>
