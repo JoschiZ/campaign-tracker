@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace SeasonOfGhosts.Core.Cities;
 
-internal sealed class SettlementConfiguration : IEntityTypeConfiguration<Settlement>
+public sealed class SettlementConfiguration : IEntityTypeConfiguration<Settlement>
 {
     public void Configure(EntityTypeBuilder<Settlement> builder)
     {

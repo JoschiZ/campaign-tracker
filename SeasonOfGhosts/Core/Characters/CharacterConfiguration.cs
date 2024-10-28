@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace SeasonOfGhosts.Core.Characters;
 
-internal sealed class CharacterConfiguration : IEntityTypeConfiguration<Character>
+public sealed class CharacterConfiguration : IEntityTypeConfiguration<Character>
 {
     public void Configure(EntityTypeBuilder<Character> builder)
     {

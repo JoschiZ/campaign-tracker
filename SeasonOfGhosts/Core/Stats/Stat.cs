@@ -7,7 +7,7 @@ using StronglyTypedIds;
 
 namespace SeasonOfGhosts.Core.Stats;
 
-internal sealed class Stat
+public sealed class Stat
 {
     public StatId Id { get; init; }
     public required string Name { get; init; }
@@ -35,7 +35,7 @@ internal sealed class Stat
     }
 }
 
-internal sealed class StatConfiguration: IEntityTypeConfiguration<Stat>
+public sealed class StatConfiguration: IEntityTypeConfiguration<Stat>
 {
     public void Configure(EntityTypeBuilder<Stat> builder)
     {
@@ -47,4 +47,4 @@ internal sealed class StatConfiguration: IEntityTypeConfiguration<Stat>
 }
 
 [StronglyTypedId]
-internal readonly partial struct StatId;
+public readonly partial struct StatId;

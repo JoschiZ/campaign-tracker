@@ -5,6 +5,12 @@ using SeasonOfGhosts.Db;
 
 var builder = WebApplication.CreateBuilder(args);
 
+
+builder.Configuration
+    .AddJsonFile("secret.appsettings.json", optional: true)
+    .AddJsonFile($"secret.appsettings.{builder.Environment.EnvironmentName}.json", optional: true);
+
+
 // Add MudBlazor services
 builder.Services.AddMudServices();
 

@@ -4,7 +4,7 @@ using SeasonOfGhosts.Core.Characters;
 
 namespace SeasonOfGhosts.Core.Factions;
 
-internal sealed class FactionConfiguration : IEntityTypeConfiguration<Faction>
+public sealed class FactionConfiguration : IEntityTypeConfiguration<Faction>
 {
     public void Configure(EntityTypeBuilder<Faction> builder)
     {

@@ -3,4 +3,4 @@ using StronglyTypedIds;
 namespace SeasonOfGhosts.Core.Campaigns;
 
 [StronglyTypedId]
-internal readonly partial struct CampaignId;
+public readonly partial struct CampaignId;

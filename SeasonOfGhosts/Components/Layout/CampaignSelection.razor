@@ -1,0 +1,48 @@
+@using Microsoft.EntityFrameworkCore
+@using SeasonOfGhosts.Core.Campaigns
+@using SeasonOfGhosts.Db
+@inject IDbContextFactory<SeasonContext> DbFactory;
+
+
+<MudTextField @bind-Value="_campaignCode" Label="Enter your campaign code" Placeholder="odfzgpmfbqj" MaxLength="10"></MudTextField>
+<MudButton Disabled="_campaignCode == null" OnClick="() => SearchCampaign(_campaignCode)">Search</MudButton>
+
+<MudForm>
+    <MudTextField @bind-Value="@_newCampaignName"></MudTextField>
+</MudForm>
+<MudButton OnClick="CreateNewCampaign">New Campaign</MudButton>
+
+@code {
+    private string? _campaignCode;
+    private string _newCampaignName = "Season of Ghosts";
+    
+    [Parameter]
+    public Campaign? SelectedCampaign { get; set; }
+    
+    [Parameter]
+    public EventCallback<Campaign?> SelectedCampaignChanged { get; set; }
+    
+    private async Task SearchCampaign(string? code)
+    {
+        await using var context = await DbFactory.CreateDbContextAsync();
+        SelectedCampaign = await context
+            .Campaigns
+            .Where(x => x.Code == code)
+            .FirstOrDefaultAsync();
+        await SelectedCampaignChanged.InvokeAsync(SelectedCampaign);
+    }
+
+    private async Task CreateNewCampaign()
+    {
+        await using var context = await DbFactory.CreateDbContextAsync();
+        var campaign = new Campaign()
+        {
+            Name = _newCampaignName,
+        };
+        context.Campaigns.Add(campaign);
+        await context.SaveChangesAsync();
+        SelectedCampaign = campaign;
+        await SelectedCampaignChanged.InvokeAsync(SelectedCampaign);
+    }
+    
+}

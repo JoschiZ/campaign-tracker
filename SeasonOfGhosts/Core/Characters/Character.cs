@@ -7,7 +7,7 @@ using StronglyTypedIds;
 
 namespace SeasonOfGhosts.Core.Characters;
 
-internal sealed class Character
+public sealed class Character
 {
     public CharacterId Id { get; init; }
     public required string Name { get; set; }
@@ -39,7 +39,7 @@ internal sealed class Character
     }
 }
 
-internal sealed class CharacterLog : ICreationTracking
+public sealed class CharacterLog : ICreationTracking
 {
     public CharacterLogId Id { get; private init; }
     public required string Reason { get; init; }
@@ -49,7 +49,7 @@ internal sealed class CharacterLog : ICreationTracking
 
 }
 
-internal sealed class CharacterLogConfiguration : IEntityTypeConfiguration<CharacterLog>
+public sealed class CharacterLogConfiguration : IEntityTypeConfiguration<CharacterLog>
 {
     public void Configure(EntityTypeBuilder<CharacterLog> builder)
     {
@@ -60,4 +60,4 @@ internal sealed class CharacterLogConfiguration : IEntityTypeConfiguration<Chara
 }
 
 [StronglyTypedId]
-internal readonly partial struct CharacterLogId;
+public readonly partial struct CharacterLogId;

@@ -1,4 +1,5 @@
-﻿@inherits LayoutComponentBase
+﻿@using SeasonOfGhosts.Core.Campaigns
+@inherits LayoutComponentBase
 
 <MudThemeProvider Theme="@_theme" IsDarkMode="_isDarkMode" />
 <MudPopoverProvider />
@@ -16,7 +17,16 @@
         <NavMenu />
     </MudDrawer>
     <MudMainContent Class="mt-16 pa-4">
-        @Body
+        @if (_campaign is not null)
+        {
+            <CascadingValue TValue="Campaign" Value="_campaign">
+                @Body    
+            </CascadingValue>       
+        }
+        else
+        {
+            <CampaignSelection @bind-SelectedCampaign="@_campaign"></CampaignSelection>
+        }
     </MudMainContent>
 </MudLayout>
 
@@ -31,6 +41,7 @@
     private bool _drawerOpen = true;
     private bool _isDarkMode = true;
     private MudTheme? _theme = null;
+    private Campaign? _campaign = null;
 
     protected override void OnInitialized()
     {

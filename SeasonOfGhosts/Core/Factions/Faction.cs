@@ -5,7 +5,7 @@ using SeasonOfGhosts.Db;
 
 namespace SeasonOfGhosts.Core.Factions;
 
-internal sealed class Faction
+public sealed class Faction
 {
     public required FactionId Id { get; init; }
     public required string Name { get; init; }

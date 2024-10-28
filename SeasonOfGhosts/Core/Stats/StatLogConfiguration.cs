@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace SeasonOfGhosts.Core.Stats;
 
-internal sealed class StatLogConfiguration : IEntityTypeConfiguration<StatLog>
+public sealed class StatLogConfiguration : IEntityTypeConfiguration<StatLog>
 {
     public void Configure(EntityTypeBuilder<StatLog> builder)
     {

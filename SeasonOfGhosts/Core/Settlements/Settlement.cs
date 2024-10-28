@@ -2,7 +2,7 @@ using SeasonOfGhosts.Core.Campaigns;
 
 namespace SeasonOfGhosts.Core.Cities;
 
-internal sealed class Settlement
+public sealed class Settlement
 {
     public required SettlementId Id { get; init;  }
     public required string Name { get; init;  }

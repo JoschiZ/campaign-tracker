@@ -3,4 +3,4 @@ using StronglyTypedIds;
 namespace SeasonOfGhosts.Core.Cities;
 
 [StronglyTypedId]
-internal readonly partial struct SettlementId;
+public readonly partial struct SettlementId;

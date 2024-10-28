@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace SeasonOfGhosts.Core.Factions;
 
-internal sealed class FactionLogConfiguration : IEntityTypeConfiguration<FactionLog>
+public sealed class FactionLogConfiguration : IEntityTypeConfiguration<FactionLog>
 {
     public void Configure(EntityTypeBuilder<FactionLog> builder)
     {

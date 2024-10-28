@@ -1,6 +1,6 @@
 namespace SeasonOfGhosts.Core.Characters;
 
-internal enum Attitude
+public enum Attitude
 {
     Hostile = -2,
     Unfriendly = -1,

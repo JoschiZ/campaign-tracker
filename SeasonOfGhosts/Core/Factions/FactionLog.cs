@@ -2,7 +2,7 @@ using SeasonOfGhosts.Db;
 
 namespace SeasonOfGhosts.Core.Factions;
 
-internal sealed class FactionLog : ICreationTracking
+public sealed class FactionLog : ICreationTracking
 {
     public FactionLogId Id { get; private init; }
     public required string Reason { get; init; }

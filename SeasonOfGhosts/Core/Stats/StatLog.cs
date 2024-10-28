@@ -2,7 +2,7 @@ using SeasonOfGhosts.Db;
 
 namespace SeasonOfGhosts.Core.Stats;
 
-internal sealed class StatLog : ICreationTracking
+public sealed class StatLog : ICreationTracking
 {
     public StatLogId Id { get; init; }
     public required Stat Stat { get; init; }
