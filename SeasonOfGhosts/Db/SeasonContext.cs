@@ -32,6 +32,7 @@ internal sealed class SeasonContext : DbContext
         configurationBuilder.Properties<StatId>().HaveConversion<StatId.EfCoreValueConverter>();
         configurationBuilder.Properties<StatLogId>().HaveConversion<StatLogId.EfCoreValueConverter>();
         configurationBuilder.Properties<FactionLogId>().HaveConversion<FactionLogId.EfCoreValueConverter>();
+        configurationBuilder.Properties<CharacterLogId>().HaveConversion<CharacterLogId.EfCoreValueConverter>();
 
         
         base.ConfigureConventions(configurationBuilder);

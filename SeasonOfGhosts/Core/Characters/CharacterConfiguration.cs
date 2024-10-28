@@ -15,5 +15,6 @@ internal sealed class CharacterConfiguration : IEntityTypeConfiguration<Characte
         builder.Property(x => x.ShortDescription).HasMaxLength(100);
 
         builder.HasMany(x => x.Factions).WithMany(x => x.Characters);
+        builder.HasMany(x => x.Log).WithOne(x => x.Character).IsRequired();
     }
 }

@@ -12,5 +12,6 @@ internal sealed class FactionConfiguration : IEntityTypeConfiguration<Faction>
         builder.Property(x => x.Id).ValueGeneratedOnAdd();
         
         builder.Property(x => x.Name).IsRequired().HasMaxLength(50);
+        builder.HasMany(x => x.Log).WithOne(x => x.Faction).IsRequired();
     }
 }
