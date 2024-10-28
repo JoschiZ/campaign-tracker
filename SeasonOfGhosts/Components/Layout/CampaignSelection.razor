@@ -3,14 +3,28 @@
 @using SeasonOfGhosts.Db
 @inject IDbContextFactory<SeasonContext> DbFactory;
 
+<MudCard>
+    <MudCardContent>
+        <MudText Typo="Typo.h5">Enter your campaign code</MudText>
+        <MudGrid>
+            <MudItem xs="7">
+                <MudTextField Immediate @bind-Value="_campaignCode" Placeholder="odfzgpmfbqj" MaxLength="10"></MudTextField>
+            </MudItem>
+            <MudItem xs="5">
+                <MudLoadingButton Disabled="_campaignCode == null" OnClick="() => SearchCampaign(_campaignCode)">Search</MudLoadingButton>
+            </MudItem>
+        </MudGrid>
+        <MudDivider Style="margin-top: 0.5rem; margin-bottom: 0.5rem" DividerType="DividerType.FullWidth"></MudDivider>
+        <MudText Typo="Typo.h5">Or create a new campaign</MudText>
+        <MudForm>
+            <MudTextField Label="Name" @bind-Value="@_newCampaignName"></MudTextField>
+        </MudForm>
+        <MudLoadingButton OnClick="CreateNewCampaign">New Campaign</MudLoadingButton>
+    </MudCardContent>
+</MudCard>
 
-<MudTextField @bind-Value="_campaignCode" Label="Enter your campaign code" Placeholder="odfzgpmfbqj" MaxLength="10"></MudTextField>
-<MudButton Disabled="_campaignCode == null" OnClick="() => SearchCampaign(_campaignCode)">Search</MudButton>
 
-<MudForm>
-    <MudTextField @bind-Value="@_newCampaignName"></MudTextField>
-</MudForm>
-<MudButton OnClick="CreateNewCampaign">New Campaign</MudButton>
+
 
 @code {
     private string? _campaignCode;

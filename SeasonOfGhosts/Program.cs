@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using MudBlazor.Services;
+using MudExtensions.Services;
 using SeasonOfGhosts.Components;
 using SeasonOfGhosts.Db;
 
@@ -13,7 +14,7 @@ builder.Configuration
 
 // Add MudBlazor services
 builder.Services.AddMudServices();
-
+builder.Services.AddMudExtensions();
 builder.Services.AddDbContextFactory<SeasonContext>(x =>
 {
     x.UseNpgsql(builder.Configuration.GetConnectionString("Default"));
