@@ -7,7 +7,10 @@
 <PageTitle>Characters</PageTitle>
 
 <MudGrid>
-    @foreach (var character in _characters)
+    <MudItem xs="12">
+        <MudTextField @bind-Value="@_characterNameSearch" Immediate></MudTextField>
+    </MudItem>
+    @foreach (var character in _characters.Where(x => x.Name.Contains(_characterNameSearch)))
     {
         <MudItem xs="12" md="6">
             <MudCard>
@@ -19,7 +22,7 @@
                             <MudTextField Margin="Margin.Dense" Variant="Variant.Filled" Underline="false" ReadOnly Value="@character.ShortDescription"></MudTextField>
                             @foreach (var faction in character.Factions)
                             {
-                                <MudChip>@faction.Name</MudChip>
+                                <MudChip T="Faction" Value="faction">@faction.Name</MudChip>
                             }
                         </MudItem>
                     </MudGrid>
@@ -88,17 +91,18 @@
     private bool _createCharacterDialogVisible;
     
     [CascadingParameter]
-    public required Campaign Campaign { get; set; }
+    public required CampaignId CampaignId { get; set; }
     private List<Character> _characters = [];
     private IReadOnlyList<Faction> _factions = [];
     private CreateCharacterModel _model = new();
+    private string _characterNameSearch = "";
 
     protected override async Task OnInitializedAsync()
     {
         await base.OnInitializedAsync();
         var campaign = await Context
             .Campaigns
-            .Where(x => x.Id == Campaign.Id)
+            .Where(x => x.Id == CampaignId)
             .Include(x => x.Characters)
             .ThenInclude(x => x.Factions)
             .FirstAsync();
@@ -109,7 +113,7 @@
     {
         _factions = await Context
             .Campaigns
-            .Where(x => x.Id == Campaign.Id)
+            .Where(x => x.Id == CampaignId)
             .Select(x => x.Factions)
             .FirstAsync();
         _createCharacterDialogVisible = true;
@@ -123,6 +127,7 @@
 
     private async Task SaveNewCharacterAsync()
     {
+        var campaign = await Context.Campaigns.FindAsync(CampaignId);
         var character = new Character()
         {
             Name = _model.Name,
@@ -130,10 +135,9 @@
             ShortDescription = _model.ShortDescription,
             Description = _model.Description,
             Factions = _model.Factions.ToList(),
-            Campaign = Campaign
+            Campaign = campaign
         };
 
-        var campaign = await Context.Campaigns.FindAsync(Campaign.Id);
         campaign.Characters.Add(character);
         
         if (_model.StartingAttitude != character.Attitude)

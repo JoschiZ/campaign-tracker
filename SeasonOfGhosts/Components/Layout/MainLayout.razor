@@ -22,7 +22,7 @@
     <MudMainContent Class="mt-16 pa-4">
         @if (_campaign is not null)
         {
-            <CascadingValue TValue="Campaign" Value="_campaign">
+            <CascadingValue TValue="CampaignId" Value="_campaign.Id">
                 @Body    
             </CascadingValue>       
         }

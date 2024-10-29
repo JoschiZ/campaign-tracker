@@ -3,22 +3,35 @@
 @using SeasonOfGhosts.Core.Constants
 @inject IJsApiService JsService
 @inject ISnackbar Snackbar
+@inherits UnitOfWorkComponentBase
 
-<PageTitle>@Campaign.Name</PageTitle>
+@if (Campaign is not null)
+{
+    <PageTitle>@Campaign.Name</PageTitle>
 
-<MudText Typo="Typo.h5">@Campaign.Name</MudText>
-<MudText Inline Typo="Typo.subtitle1">Share Code: <MudButton OnClick="() => CopyToClipboard(Campaign.Code)" Variant="Variant.Text">@Campaign.Code</MudButton></MudText>
+    <MudText Typo="Typo.h5">@Campaign.Name</MudText>
+    <MudText Inline Typo="Typo.subtitle1">Share Code: <MudButton OnClick="() => CopyToClipboard(Campaign.Code)" Variant="Variant.Text">@Campaign.Code</MudButton></MudText>
 
-<MudGrid>
-    <MudItem xs="6" md="4"><MudButton EndIcon="@AppRoutes.Characters" Href="@AppRoutes.Characters" FullWidth Variant="Variant.Outlined">Characters</MudButton></MudItem>
-    <MudItem xs="6" md="4"><MudButton EndIcon="@AppRoutes.Stats" Href="@AppRoutes.Stats" FullWidth Variant="Variant.Outlined">Stats</MudButton></MudItem>
-    <MudItem xs="6" md="4"><MudButton EndIcon="@AppRoutes.Factions" Href="@AppRoutes.Factions" FullWidth Variant="Variant.Outlined">Factions</MudButton></MudItem>
-    <MudItem xs="6" md="4"><MudButton EndIcon="@AppRoutes.Settlements" Href="@AppRoutes.Settlements" FullWidth Variant="Variant.Outlined">Settlements</MudButton></MudItem>
-</MudGrid>
+    <MudGrid>
+        <MudItem xs="6" md="4"><MudButton EndIcon="@AppRoutes.Characters" Href="@AppRoutes.Characters" FullWidth Variant="Variant.Outlined">Characters</MudButton></MudItem>
+        <MudItem xs="6" md="4"><MudButton EndIcon="@AppRoutes.Stats" Href="@AppRoutes.Stats" FullWidth Variant="Variant.Outlined">Stats</MudButton></MudItem>
+        <MudItem xs="6" md="4"><MudButton EndIcon="@AppRoutes.Factions" Href="@AppRoutes.Factions" FullWidth Variant="Variant.Outlined">Factions</MudButton></MudItem>
+        <MudItem xs="6" md="4"><MudButton EndIcon="@AppRoutes.Settlements" Href="@AppRoutes.Settlements" FullWidth Variant="Variant.Outlined">Settlements</MudButton></MudItem>
+    </MudGrid>    
+}
+
 @code{
 
     [CascadingParameter]
-    public required Campaign Campaign { get; set; }
+    public required CampaignId CampaignId { get; set; }
+    
+    private Campaign? Campaign { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+        Campaign = await Context.Campaigns.FindAsync(CampaignId);
+    }
 
     private async Task CopyToClipboard(string content)
     {
