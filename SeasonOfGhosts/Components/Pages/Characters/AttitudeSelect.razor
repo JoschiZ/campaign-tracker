@@ -1,0 +1,50 @@
+@using SeasonOfGhosts.Components.Shared
+@using SeasonOfGhosts.Core.Characters
+@inject IDialogService DialogService
+@inject ISnackbar Snackbar
+@inherits UnitOfWorkComponentBase
+
+<MudSelect T="Attitude" Value="Character.Attitude" ValueChanged="@(newAttitude => SetAttitudeAsync(newAttitude))">
+    <MudSelectItem Value="Attitude.Hostile">
+        <MudText Color="Color.Error">@Attitude.Hostile</MudText>
+    </MudSelectItem>
+    <MudSelectItem Value="Attitude.Unfriendly">
+        <MudText Color="Color.Warning">@Attitude.Unfriendly</MudText>
+    </MudSelectItem>
+    <MudSelectItem Value="Attitude.Indifferent">
+        <MudText Color="Color.Default">@Attitude.Indifferent</MudText>
+    </MudSelectItem>
+    <MudSelectItem Value="Attitude.Friendly">
+        <MudText Color="Color.Info">@Attitude.Friendly</MudText>
+    </MudSelectItem>
+    <MudSelectItem Value="Attitude.Helpful">
+        <MudText Color="Color.Success">@Attitude.Helpful</MudText>
+    </MudSelectItem>
+</MudSelect>
+
+@code {
+    [Parameter, EditorRequired]
+    public required Character Character { get; set; }
+    [Parameter]
+    public EventCallback<Character> CharacterChanged { get; set; }
+
+    private async Task SetAttitudeAsync(Attitude newAttitude)
+    {
+        var dialog = await DialogService.ShowAsync<ReasonSelect>();
+        var result = await dialog.Result;
+        if (result is not {Canceled: false})
+        {
+            Snackbar.Add("Canceled");
+            return;
+        }
+
+        if (result.Data is not string reason)
+        {
+            Snackbar.Add("No reason was given");
+            return;
+        }
+        
+        await Character.ChangeAttitudeAsync(newAttitude, reason, Context);
+        await CharacterChanged.InvokeAsync(Character);
+    }
+}

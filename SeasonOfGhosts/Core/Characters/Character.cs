@@ -9,7 +9,7 @@ namespace SeasonOfGhosts.Core.Characters;
 
 public sealed class Character
 {
-    public CharacterId Id { get; init; }
+    public CharacterId Id { get; private init; }
     public required string Name { get; set; }
     public string Race { get; set; } = "";
     public string ShortDescription { get; set; } = "";

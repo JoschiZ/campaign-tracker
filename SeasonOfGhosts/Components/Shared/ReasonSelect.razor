@@ -1,0 +1,23 @@
+<MudDialog>
+    <TitleContent>
+        Select a reason
+    </TitleContent>
+    <DialogContent>
+        <MudTextField Immediate @bind-Value="@_reason" MaxLength="50" Label="Reason"></MudTextField>
+    </DialogContent>
+    <DialogActions>
+        <MudButton Variant="Variant.Filled" Color="Color.Warning" OnClick="Cancel">Cancel</MudButton>
+        <MudButton Disabled="_reason.Length < 5" Variant="Variant.Filled" Color="Color.Success" OnClick="Submit">Save</MudButton>
+    </DialogActions>
+</MudDialog>
+
+@code {
+    private string _reason = "";
+    
+    [CascadingParameter]
+    public required MudDialogInstance MudDialog { get; set; }
+
+    private void Submit() => MudDialog.Close(DialogResult.Ok(_reason));
+
+    private void Cancel() => MudDialog.Cancel();
+}

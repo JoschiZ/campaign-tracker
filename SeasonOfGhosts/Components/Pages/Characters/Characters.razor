@@ -1,6 +1,80 @@
 @page "/characters"
-<h3>Characters</h3>
+@using Microsoft.EntityFrameworkCore
+@using SeasonOfGhosts.Core.Campaigns
+@using SeasonOfGhosts.Core.Characters
+@inherits UnitOfWorkComponentBase
+<PageTitle>Characters</PageTitle>
+
+    <MudGrid>
+        @foreach (var character in _characters)
+        {
+            <MudItem xs="12" md="6">
+                <MudCard>
+                    <MudCardContent >
+                        <MudGrid>
+                            <MudItem xs="7"><MudText>@character.Name</MudText></MudItem>
+                            <MudItem xs="5"><AttitudeSelect Character="character"></AttitudeSelect></MudItem>
+                            <MudItem xs="12"><MudTextField Margin="Margin.Dense" Variant="Variant.Filled" Underline="false" ReadOnly Value="@character.ShortDescription"></MudTextField></MudItem>
+                        </MudGrid>
+                    </MudCardContent>
+                </MudCard>
+            </MudItem>
+        }
+        <MudItem xs="12">
+            <MudButton
+                FullWidth
+                Variant="Variant.Filled"
+                EndIcon="@Icons.Material.Filled.AddCircle"
+                Color="Color.Primary"
+                OnClick="AddNewCharacter">Add Character</MudButton>
+        </MudItem>
+    </MudGrid>
+
+<MudDialog @bind-Visible="_createCharacterDialogVisible">
+    <TitleContent>
+        New Character
+    </TitleContent>
+    <DialogContent>
+        <MudForm>
+            <MudTextField Label="Name"></MudTextField>
+            <MudTextField Label="Short Description"></MudTextField>
+            <MudTextField Label="Description"></MudTextField>
+        </MudForm>
+    </DialogContent>
+    <DialogActions>
+        
+    </DialogActions>
+</MudDialog>
 
 @code {
+    private bool _createCharacterDialogVisible;
     
+    [CascadingParameter]
+    public required Campaign Campaign { get; set; }
+
+    private IEnumerable<Character> _characters = [];
+
+    protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+        var campaign = await Context
+            .Campaigns
+            .Where(x => x.Id == Campaign.Id)
+            .Include(x => x.Characters)
+            .FirstAsync();
+        _characters = campaign.Characters;
+    }
+
+    private async Task AddNewCharacter()
+    {
+        var newCharacter = new Character()
+        {
+            Campaign = Campaign,
+            Name = "Placeholder"
+        };
+        
+        Campaign.Characters.Add(newCharacter);
+        await Context.SaveChangesAsync();
+    }
+
 }
