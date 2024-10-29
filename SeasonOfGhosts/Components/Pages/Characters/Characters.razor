@@ -2,33 +2,40 @@
 @using Microsoft.EntityFrameworkCore
 @using SeasonOfGhosts.Core.Campaigns
 @using SeasonOfGhosts.Core.Characters
+@using SeasonOfGhosts.Core.Factions
 @inherits UnitOfWorkComponentBase
 <PageTitle>Characters</PageTitle>
 
-    <MudGrid>
-        @foreach (var character in _characters)
-        {
-            <MudItem xs="12" md="6">
-                <MudCard>
-                    <MudCardContent >
-                        <MudGrid>
-                            <MudItem xs="7"><MudText>@character.Name</MudText></MudItem>
-                            <MudItem xs="5"><AttitudeSelect Character="character"></AttitudeSelect></MudItem>
-                            <MudItem xs="12"><MudTextField Margin="Margin.Dense" Variant="Variant.Filled" Underline="false" ReadOnly Value="@character.ShortDescription"></MudTextField></MudItem>
-                        </MudGrid>
-                    </MudCardContent>
-                </MudCard>
-            </MudItem>
-        }
-        <MudItem xs="12">
-            <MudButton
-                FullWidth
-                Variant="Variant.Filled"
-                EndIcon="@Icons.Material.Filled.AddCircle"
-                Color="Color.Primary"
-                OnClick="AddNewCharacter">Add Character</MudButton>
+<MudGrid>
+    @foreach (var character in _characters)
+    {
+        <MudItem xs="12" md="6">
+            <MudCard>
+                <MudCardContent >
+                    <MudGrid>
+                        <MudItem xs="7"><MudText>@character.Name</MudText></MudItem>
+                        <MudItem xs="5"><AttitudeSelect Character="character"></AttitudeSelect></MudItem>
+                        <MudItem xs="12">
+                            <MudTextField Margin="Margin.Dense" Variant="Variant.Filled" Underline="false" ReadOnly Value="@character.ShortDescription"></MudTextField>
+                            @foreach (var faction in character.Factions)
+                            {
+                                <MudChip>@faction.Name</MudChip>
+                            }
+                        </MudItem>
+                    </MudGrid>
+                </MudCardContent>
+            </MudCard>
         </MudItem>
-    </MudGrid>
+    }
+    <MudItem xs="12">
+        <MudButton
+            FullWidth
+            Variant="Variant.Filled"
+            EndIcon="@Icons.Material.Filled.AddCircle"
+            Color="Color.Primary"
+            OnClick="StartCreatingNewCharacterAsync">Add Character</MudButton>
+    </MudItem>
+</MudGrid>
 
 <MudDialog @bind-Visible="_createCharacterDialogVisible">
     <TitleContent>
@@ -36,13 +43,44 @@
     </TitleContent>
     <DialogContent>
         <MudForm>
-            <MudTextField Label="Name"></MudTextField>
-            <MudTextField Label="Short Description"></MudTextField>
-            <MudTextField Label="Description"></MudTextField>
+            <MudTextField @bind-Value="@_model.Name" Label="Name"></MudTextField>
+            <MudTextField @bind-Value="@_model.ShortDescription" Label="Title/Profession"></MudTextField>
+            <MudTextField @bind-Value="@_model.Description" Label="Description"></MudTextField>
+            <MudTextField @bind-Value="@_model.Ancestry" Label="Ancestry"></MudTextField>
+            <MudSelect @bind-Value="@_model.StartingAttitude" T="Attitude">
+                <MudSelectItem Value="Attitude.Hostile">
+                    <MudText Color="Color.Error">@Attitude.Hostile</MudText>
+                </MudSelectItem>
+                <MudSelectItem Value="Attitude.Unfriendly">
+                    <MudText Color="Color.Warning">@Attitude.Unfriendly</MudText>
+                </MudSelectItem>
+                <MudSelectItem Value="Attitude.Indifferent">
+                    <MudText Color="Color.Default">@Attitude.Indifferent</MudText>
+                </MudSelectItem>
+                <MudSelectItem Value="Attitude.Friendly">
+                    <MudText Color="Color.Info">@Attitude.Friendly</MudText>
+                </MudSelectItem>
+                <MudSelectItem Value="Attitude.Helpful">
+                    <MudText Color="Color.Success">@Attitude.Helpful</MudText>
+                </MudSelectItem>
+            </MudSelect>
+            <MudStack Row>
+                <MudSelect Label="Factions" T="Faction" MultiSelection @bind-SelectedValues="@_model.Factions">
+                    @foreach (var faction in _factions)
+                    {
+                    <MudSelectItem Value="@faction">@faction.Name</MudSelectItem>
+                    }
+                </MudSelect>
+                @foreach (var faction in _model.Factions)
+                {
+                <MudChip T="Faction" Value="faction" OnClose="() => _model.Factions = _model.Factions.Where(x => x.Id != faction.Id)">@faction.Name</MudChip>
+                }
+            </MudStack>
         </MudForm>
     </DialogContent>
     <DialogActions>
-        
+        <MudLoadingButton Color="Color.Error" OnClick="AbortCreatingCharacter">Discard</MudLoadingButton>
+        <MudLoadingButton Color="Color.Success" OnClick="SaveNewCharacterAsync">Save</MudLoadingButton>
     </DialogActions>
 </MudDialog>
 
@@ -51,8 +89,9 @@
     
     [CascadingParameter]
     public required Campaign Campaign { get; set; }
-
-    private IEnumerable<Character> _characters = [];
+    private List<Character> _characters = [];
+    private IReadOnlyList<Faction> _factions = [];
+    private CreateCharacterModel _model = new();
 
     protected override async Task OnInitializedAsync()
     {
@@ -61,20 +100,62 @@
             .Campaigns
             .Where(x => x.Id == Campaign.Id)
             .Include(x => x.Characters)
+            .ThenInclude(x => x.Factions)
             .FirstAsync();
         _characters = campaign.Characters;
     }
 
-    private async Task AddNewCharacter()
+    private async Task StartCreatingNewCharacterAsync()
     {
-        var newCharacter = new Character()
+        _factions = await Context
+            .Campaigns
+            .Where(x => x.Id == Campaign.Id)
+            .Select(x => x.Factions)
+            .FirstAsync();
+        _createCharacterDialogVisible = true;
+    }
+
+    private void AbortCreatingCharacter()
+    {
+        _model = new CreateCharacterModel();
+        _createCharacterDialogVisible = false;
+    }
+
+    private async Task SaveNewCharacterAsync()
+    {
+        var character = new Character()
         {
-            Campaign = Campaign,
-            Name = "Placeholder"
+            Name = _model.Name,
+            Ancestry = _model.Ancestry,
+            ShortDescription = _model.ShortDescription,
+            Description = _model.Description,
+            Factions = _model.Factions.ToList(),
+            Campaign = Campaign
         };
+
+        var campaign = await Context.Campaigns.FindAsync(Campaign.Id);
+        campaign.Characters.Add(character);
         
-        Campaign.Characters.Add(newCharacter);
+        if (_model.StartingAttitude != character.Attitude)
+        {
+            await character.ChangeAttitudeAsync(_model.StartingAttitude, "Starting Attitude", Context);
+        }
+
         await Context.SaveChangesAsync();
+            
+        _createCharacterDialogVisible = false;
+        _model = new CreateCharacterModel();
+    }
+    
+    private class CreateCharacterModel
+    {
+        public string Name { get; set; } = "";
+        public string Ancestry { get; set; } = "";
+        public string Description { get; set; } = "";
+        public string ShortDescription { get; set; } = "";
+        public Attitude StartingAttitude { get; set; }
+        public IEnumerable<Faction> Factions { get; set; } = [];
+
     }
 
 }

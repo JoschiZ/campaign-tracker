@@ -11,7 +11,11 @@ public sealed class Character
 {
     public CharacterId Id { get; private init; }
     public required string Name { get; set; }
-    public string Race { get; set; } = "";
+    public string Ancestry { get; set; } = "";
+    
+    /// <summary>
+    /// A shorter description, mostly a title or profession
+    /// </summary>
     public string ShortDescription { get; set; } = "";
     public string Description { get; set; } = "";
     public Attitude Attitude { get; private set; } = Attitude.Indifferent;
@@ -22,11 +26,11 @@ public sealed class Character
     
     public async Task<CharacterLog> ChangeAttitudeAsync(Attitude newAttitude, string reason, SeasonContext context)
     {
-        context.Attach(this);
+        var character = await context.FindAsync<Character>(Id);
 
         var log = new CharacterLog()
         {
-            Character = this,
+            Character = character,
             NewAttitude = newAttitude,
             Reason = reason,
         };
