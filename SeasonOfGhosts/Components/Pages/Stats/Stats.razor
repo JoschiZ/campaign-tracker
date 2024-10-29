@@ -1,6 +1,126 @@
 @page "/stats"
-<h3>Stats</h3>
+@using Microsoft.EntityFrameworkCore
+@using SeasonOfGhosts.Components.Shared
+@using SeasonOfGhosts.Core
+@using SeasonOfGhosts.Core.Campaigns
+@using SeasonOfGhosts.Core.Stats
+@inherits UnitOfWorkComponentBase
+@inject IDialogService DialogService
+<PageTitle>Stats</PageTitle>
+
+@if (_campaign is not null)
+{
+    <MudGrid>
+        <MudItem xs="12">
+            <MudTextField @bind-Value="@_nameSearch" Placeholder="Search by name"></MudTextField>
+        </MudItem>
+        @foreach (var stat in _campaign.Stats.Where(x => x.Name.Contains(_nameSearch)))
+        {
+            <MudItem xs="12" md="6">
+                <MudCard>
+                    <MudCardContent>
+                        <MudGrid>
+                            <MudItem xs="7"><MudText Typo="Typo.subtitle1">@stat.Name</MudText></MudItem>
+                            <MudItem xs="5"><MudButton Variant="Variant.Filled" OnClick="() => AdjustStat(stat)">Adjust</MudButton></MudItem>
+                            <MudItem xs="6">Value: @stat.Value</MudItem>
+                        </MudGrid>
+                    </MudCardContent>
+                </MudCard>
+            </MudItem>
+        }
+        <MudItem xs="12">
+            <MudButton
+                FullWidth
+                Variant="Variant.Filled"
+                Color="Color.Primary"
+                EndIcon="@Icons.Material.Filled.AddCircle"
+                OnClick="StartCreate">New Stat</MudButton>
+        </MudItem>
+    </MudGrid>
+    
+    <MudDialog @bind-Visible="@_createNewStatVisible">
+        <TitleContent>
+            New Stat
+        </TitleContent>
+        <DialogContent>
+            <MudForm>
+                <MudTextField @bind-Value="@_model.Name"></MudTextField>
+            </MudForm>
+        </DialogContent>
+        <DialogActions>
+            <MudButton Variant="Variant.Filled" Color="Color.Error" OnClick="CancelCreation">Cancel</MudButton>
+            <MudLoadingButton Variant="Variant.Filled" Color="Color.Success" OnClick="SaveNewStat">Save</MudLoadingButton>
+        </DialogActions>
+    </MudDialog>
+}
+
 
 @code {
-    
+    [CascadingParameter]
+    public required CampaignId CampaignId { get; set; }
+
+    private Campaign? _campaign;
+    private string _nameSearch = "";
+    private CreateNewStat _model = new();
+    private bool _createNewStatVisible;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+        _campaign = await Context
+            .Campaigns
+            .Where(x => x.Id == CampaignId)
+            .Include(x => x.Stats)
+            .FirstAsync();
+    }
+
+    private void StartCreate() => _createNewStatVisible = true;
+
+    private async Task SaveNewStat()
+    {
+        if (_campaign is null)
+        {
+            return;
+        }
+        
+        var newStat = new Stat()
+        {
+            Campaign = _campaign,
+            Name = _model.Name
+        };
+        
+        _campaign.Stats.Add(newStat);
+        await Context.SaveChangesAsync();
+        _model = new CreateNewStat();
+        _createNewStatVisible = false;
+    }
+
+    private void CancelCreation()
+    {
+        _createNewStatVisible = false;
+        _model = new CreateNewStat();
+    }
+
+    private async Task AdjustStat(Stat stat)
+    {
+        var dialog = await DialogService.ShowAsync<AdjustSelect>();
+        var result = await dialog.Result;
+
+        if (result is not { Canceled: false })
+        {
+            return;
+        }
+
+        if (result.Data is not Adjustment adjustment)
+        {
+            return;
+        }
+
+        await stat.ChangeStatAsync(adjustment.Delta, adjustment.Reason, Context);
+    }
+
+    private class CreateNewStat
+    {
+        public string Name { get; set; } = "";
+    }
 }

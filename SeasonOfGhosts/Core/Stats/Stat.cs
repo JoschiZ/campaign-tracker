@@ -15,16 +15,20 @@ public sealed class Stat
     public required Campaign Campaign { get; init; }
     public List<StatLog> Log { get; init; } = [];
 
-    public async Task<StatLog> ChangeStatAsync(int delta, string reason, SeasonContext context)
+    public async Task<StatLog?> ChangeStatAsync(int delta, string reason, SeasonContext context)
     {
+        var stat = await context.FindAsync<Stat>(Id);
+        if (stat is null)
+        {
+            return null;
+        }
         var log = new StatLog()
         {
             Delta = delta,
             Reason = reason,
-            Stat = this
+            Stat = stat
         };
         
-        context.Attach(this);
         
         Value += delta;
         Log.Add(log);
