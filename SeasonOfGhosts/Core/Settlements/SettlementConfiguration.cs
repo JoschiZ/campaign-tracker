@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using SeasonOfGhosts.Core.Settlements;
 
 namespace SeasonOfGhosts.Core.Cities;
 
