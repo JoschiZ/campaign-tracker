@@ -19,11 +19,13 @@
                         <MudItem xs="7"><MudText>@character.Name</MudText></MudItem>
                         <MudItem xs="5"><AttitudeSelect Character="character"></AttitudeSelect></MudItem>
                         <MudItem xs="12">
-                            <MudTextField Margin="Margin.Dense" Variant="Variant.Filled" Underline="false" ReadOnly Value="@character.ShortDescription"></MudTextField>
-                            @foreach (var faction in character.Factions)
-                            {
+                            <MudStack Row>
+                                <MudTextField Margin="Margin.Dense" Variant="Variant.Filled" Underline="false" ReadOnly Value="@character.ShortDescription"></MudTextField>
+                                @foreach (var faction in character.Factions)
+                                {
                                 <MudChip T="Faction" Value="faction">@faction.Name</MudChip>
-                            }
+                                }
+                            </MudStack>
                         </MudItem>
                     </MudGrid>
                 </MudCardContent>
@@ -68,7 +70,7 @@
                 </MudSelectItem>
             </MudSelect>
             <MudStack Row>
-                <MudSelect Label="Factions" T="Faction" MultiSelection @bind-SelectedValues="@_model.Factions">
+                <MudSelect ToStringFunc="x => x?.Name" Label="Factions" T="Faction" MultiSelection @bind-SelectedValues="@_model.Factions">
                     @foreach (var faction in _factions)
                     {
                     <MudSelectItem Value="@faction">@faction.Name</MudSelectItem>

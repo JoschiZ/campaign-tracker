@@ -1,6 +1,145 @@
 @page "/factions"
-<h3>Factions</h3>
+@using Microsoft.EntityFrameworkCore
+@using SeasonOfGhosts.Components.Shared
+@using SeasonOfGhosts.Core
+@using SeasonOfGhosts.Core.Campaigns
+@using SeasonOfGhosts.Core.Characters
+@using SeasonOfGhosts.Core.Factions
+@inherits UnitOfWorkComponentBase
+@inject IDialogService DialogService
+<PageTitle>Factions</PageTitle>
+
+@if (_campaign is not null)
+{
+    <MudGrid>
+        <MudItem xs="12">
+            <MudTextField @bind-Value="_nameSearch" Placeholder="Search by name"></MudTextField>
+        </MudItem>
+        @foreach (var faction in _campaign.Factions.Where(x => x.Name.Contains(_nameSearch)))
+        {
+            <MudItem xs="12" md="6">
+                <MudCard>
+                    <MudCardContent>
+                        <MudGrid>
+                            <MudItem xs="5">@faction.Name</MudItem>
+                            <MudItem xs="4">Reputation: @faction.Reputation</MudItem>
+                            <MudItem xs="3">
+                                <MudButton Variant="Variant.Filled" Size="Size.Small"
+                                           OnClick="() => AdjustRepAsync(faction)">Adjust</MudButton>
+                            </MudItem>
+                        </MudGrid>
+                    </MudCardContent>
+                </MudCard>
+            </MudItem>
+        }
+        <MudItem xs="12">
+            <MudButton FullWidth
+                       Variant="Variant.Filled"
+                       Color="Color.Primary"
+                       EndIcon="@Icons.Material.Filled.AddCircle"
+                       OnClick="StartCreatingFactionAsync">New Faction
+            </MudButton>
+        </MudItem>
+    </MudGrid>
+    
+    <MudDialog @bind-Visible="@_createDialogVisible">
+        <TitleContent>
+            New Faction
+        </TitleContent>
+        <DialogContent>
+            <MudForm>
+                <MudTextField MaxLength="50" Label="Name" @bind-Value="@_model.Name"></MudTextField>
+                <MudSelect ToStringFunc="x => x?.Name" Label="Members" T="Character" MultiSelection @bind-SelectedValues="_model.Characters">
+                    @foreach (var character in _campaign.Characters)
+                    {
+                        <MudSelectItem Value="@character">@character.Name</MudSelectItem>
+                    }
+                </MudSelect>
+                @foreach (var character in _model.Characters)
+                {
+                    <MudChip T="Character" Value="character">@character.Name</MudChip>
+                }
+            </MudForm>
+        </DialogContent>
+        <DialogActions>
+            <MudButton OnClick="AbortCreation" Variant="Variant.Filled" Color="Color.Error">Cancel</MudButton>
+            <MudLoadingButton OnClick="SaveNewFactionAsync" Variant="Variant.Filled" Color="Color.Success">Save</MudLoadingButton>
+        </DialogActions>
+    </MudDialog>
+}
 
 @code {
-    
+    private string _nameSearch = "";
+    private bool _createDialogVisible;
+    private NewFaction _model = new();
+
+    [CascadingParameter] public required CampaignId CampaignId { get; set; }
+
+    private Campaign? _campaign;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+        _campaign = await Context
+                .Campaigns
+                .Where(x => x.Id == CampaignId)
+                .Include(x => x.Factions)
+                .FirstAsync();
+    }
+
+    private async Task StartCreatingFactionAsync()
+    {
+        _campaign = await Context
+            .Campaigns
+            .Where(x => x.Id == CampaignId)
+            .Include(x => x.Characters)
+            .FirstAsync();
+
+        _createDialogVisible = true;
+    }
+
+    private async Task SaveNewFactionAsync()
+    {
+        if (_campaign is null)
+        {
+            return;
+        }
+
+        var faction = new Faction()
+        {
+            Name = _model.Name,
+            Campaign = _campaign,
+            Characters = _model.Characters.ToList()
+        };
+        _campaign.Factions.Add(faction);
+
+        await Context.SaveChangesAsync();
+        _createDialogVisible = false;
+        _model = new NewFaction();
+    }
+
+    private void AbortCreation()
+    {
+        _model = new NewFaction();
+        _createDialogVisible = false;
+    }
+
+    private async Task AdjustRepAsync(Faction faction)
+    {
+        var dialog = await DialogService.ShowAsync<AdjustSelect>();
+        var result = await dialog.Result;
+        
+        if (result?.Data is not Adjustment adjustment)
+        {
+            return;
+        }
+
+        await faction.ChangeReputationAsync(adjustment.Delta, adjustment.Reason, Context);
+    }
+
+    private class NewFaction
+    {
+        public string Name { get; set; } = "";
+        public IEnumerable<Character> Characters { get; set; } = [];
+    }
 }

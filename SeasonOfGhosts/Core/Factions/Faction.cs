@@ -7,23 +7,28 @@ namespace SeasonOfGhosts.Core.Factions;
 
 public sealed class Faction
 {
-    public required FactionId Id { get; init; }
+    public FactionId Id { get; private init; }
     public required string Name { get; init; }
     public int Reputation { get; private set; }
     public required Campaign Campaign { get; init; }
     public List<Character> Characters { get; init; } = [];
     public List<FactionLog> Log { get; init; } = [];
 
-    public async Task<FactionLog> ChangeReputationAsync(int delta, string reason, SeasonContext context)
+    public async Task<FactionLog?> ChangeReputationAsync(int delta, string reason, SeasonContext context)
     {
+        var faction = await context.FindAsync<Faction>(Id);
+
+        if (faction is null)
+        {
+            return null;
+        }
+        
         var log = new FactionLog()
         {
             Delta = delta,
             Reason = reason,
-            Faction = this
+            Faction = faction
         };
-
-        context.Attach(this);
         
         Reputation += delta;
         Log.Add(log);

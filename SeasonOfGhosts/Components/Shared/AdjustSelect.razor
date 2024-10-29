@@ -1,0 +1,26 @@
+@using SeasonOfGhosts.Core
+<MudDialog>
+    <TitleContent>
+        Adjust
+    </TitleContent>
+    <DialogContent>
+        <MudSlider Step="1" Min="-10" Max="10" @bind-Value="@_amount"></MudSlider>
+        <MudTextField Immediate @bind-Value="@_reason" MaxLength="50" Label="Reason"></MudTextField>
+    </DialogContent>
+    <DialogActions>
+        <MudButton Variant="Variant.Filled" Color="Color.Warning" OnClick="Cancel">Cancel</MudButton>
+        <MudButton Disabled="_reason.Length < 5" Variant="Variant.Filled" Color="Color.Success" OnClick="Submit">Save</MudButton>
+    </DialogActions>
+</MudDialog>
+
+@code {
+    private string _reason = "";
+    private int _amount;
+    
+    [CascadingParameter]
+    public required MudDialogInstance MudDialog { get; set; }
+
+    private void Submit() => MudDialog.Close(DialogResult.Ok(new Adjustment(_amount, _reason)));
+
+    private void Cancel() => MudDialog.Cancel();
+}
