@@ -22,7 +22,10 @@
         <MudForm>
             <MudTextField Label="Name" @bind-Value="@_newCampaignName"></MudTextField>
         </MudForm>
-        <MudLoadingButton OnClick="CreateNewCampaign">New Campaign</MudLoadingButton>
+        <MudButtonGroup>
+            <MudLoadingButton OnClick="CreateNewCampaign">New Campaign</MudLoadingButton>
+            <MudLoadingButton OnClick="CreateNewSeasonOfGhosts"></MudLoadingButton>
+        </MudButtonGroup>
     </MudCardContent>
 </MudCard>
 
@@ -71,5 +74,17 @@
         await SelectedCampaignChanged.InvokeAsync(SelectedCampaign);
         _loading = false;
     }
-    
+
+    private async Task CreateNewSeasonOfGhosts()
+    {
+        _loading = true;
+        await using var context = await DbFactory.CreateDbContextAsync();
+        var campaign = Campaign.CreateSeasonOfGhosts(_newCampaignName);
+        context.Campaigns.Add(campaign);
+        await context.SaveChangesAsync();
+        SelectedCampaign = campaign;
+        await SelectedCampaignChanged.InvokeAsync(SelectedCampaign);
+        _loading = false;
+    }
+
 }
