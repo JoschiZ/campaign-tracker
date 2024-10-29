@@ -8,7 +8,7 @@
 
 <MudGrid>
     <MudItem xs="12">
-        <MudTextField @bind-Value="@_characterNameSearch" Immediate></MudTextField>
+        <MudTextField Placeholder="Search by name" @bind-Value="@_characterNameSearch" Immediate></MudTextField>
     </MudItem>
     @foreach (var character in _characters.Where(x => x.Name.Contains(_characterNameSearch)))
     {
