@@ -3,6 +3,9 @@
 @using SeasonOfGhosts.Db
 @inject IDbContextFactory<SeasonContext> DbFactory;
 
+<MudOverlay DarkBackground bind-Visible="@_loading">
+    <MudProgressCircular Indeterminate Color="Color.Primary"></MudProgressCircular>
+</MudOverlay>
 <MudCard>
     <MudCardContent>
         <MudText Typo="Typo.h5">Enter your campaign code</MudText>
@@ -29,7 +32,8 @@
 @code {
     private string? _campaignCode;
     private string _newCampaignName = "Season of Ghosts";
-    
+    private bool _loading;
+
     [Parameter]
     public Campaign? SelectedCampaign { get; set; }
     
@@ -42,17 +46,20 @@
         {
             return;
         }
-        
+
+        _loading = true;
         await using var context = await DbFactory.CreateDbContextAsync();
         SelectedCampaign = await context
             .Campaigns
             .Where(x => x.Code == code)
             .FirstOrDefaultAsync();
         await SelectedCampaignChanged.InvokeAsync(SelectedCampaign);
+        _loading = false;
     }
 
     private async Task CreateNewCampaign()
     {
+        _loading = true;
         await using var context = await DbFactory.CreateDbContextAsync();
         var campaign = new Campaign()
         {
@@ -62,6 +69,7 @@
         await context.SaveChangesAsync();
         SelectedCampaign = campaign;
         await SelectedCampaignChanged.InvokeAsync(SelectedCampaign);
+        _loading = false;
     }
     
 }
