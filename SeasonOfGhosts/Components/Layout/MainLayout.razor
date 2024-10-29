@@ -11,7 +11,11 @@
         <MudText Typo="Typo.h5" Class="ml-3">Campaign Tracker</MudText>
         <MudSpacer />
         <MudIconButton Icon="@(DarkLightModeButtonIcon)" Color="Color.Inherit" OnClick="@DarkModeToggle" />
-    </MudAppBar>
+        @if (_campaign is not null)
+        {
+            <MudIconButton Icon="@Icons.Material.Filled.Logout" Color="Color.Error" OnClick="() => _campaign = null"></MudIconButton>
+        }
+        </MudAppBar>
     <MudDrawer @bind-Open="_drawerOpen" ClipMode="DrawerClipMode.Always" Elevation="2">
         <NavMenu />
     </MudDrawer>

@@ -1,5 +1,6 @@
 ﻿@page "/"
 @using SeasonOfGhosts.Core.Campaigns
+@using SeasonOfGhosts.Core.Constants
 @inject IJsApiService JsService
 @inject ISnackbar Snackbar
 
@@ -9,10 +10,10 @@
 <MudText Inline Typo="Typo.subtitle1">Share Code: <MudButton OnClick="() => CopyToClipboard(Campaign.Code)" Variant="Variant.Text">@Campaign.Code</MudButton></MudText>
 
 <MudGrid>
-    <MudItem xs="6" md="4">Characters</MudItem>
-    <MudItem xs="6" md="4">Stats</MudItem>
-    <MudItem xs="6" md="4">Factions</MudItem>
-    <MudItem xs="6" md="4">Settlements</MudItem>
+    <MudItem xs="6" md="4"><MudButton EndIcon="@AppRoutes.Characters" Href="@AppRoutes.Characters" FullWidth Variant="Variant.Outlined">Characters</MudButton></MudItem>
+    <MudItem xs="6" md="4"><MudButton EndIcon="@AppRoutes.Stats" Href="@AppRoutes.Stats" FullWidth Variant="Variant.Outlined">Stats</MudButton></MudItem>
+    <MudItem xs="6" md="4"><MudButton EndIcon="@AppRoutes.Factions" Href="@AppRoutes.Factions" FullWidth Variant="Variant.Outlined">Factions</MudButton></MudItem>
+    <MudItem xs="6" md="4"><MudButton EndIcon="@AppRoutes.Settlements" Href="@AppRoutes.Settlements" FullWidth Variant="Variant.Outlined">Settlements</MudButton></MudItem>
 </MudGrid>
 @code{
 
