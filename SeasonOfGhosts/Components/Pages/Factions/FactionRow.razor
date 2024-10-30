@@ -6,11 +6,16 @@
 <MudCard>
     <MudCardContent>
         <MudGrid>
-            <MudItem xs="5">@Faction.Name</MudItem>
-            <MudItem xs="4">Reputation: @Faction.Reputation</MudItem>
-            <MudItem xs="3">
-                <MudButton Variant="Variant.Filled" Size="Size.Small"
-                           OnClick="() => AdjustRepAsync(Faction)">Adjust</MudButton>
+            <MudItem xs="7">@Faction.Name</MudItem>
+            <MudItem xs="5">
+            <MudNumericField Value="Faction.Reputation"
+                             Adornment="Adornment.End"
+                             AdornmentIcon="@Icons.Material.Filled.Edit"
+                             OnAdornmentClick="AdjustRepAsync"
+                             HideSpinButtons
+                             ReadOnly
+                             Label="Reputation">
+            </MudNumericField>
             </MudItem>
         </MudGrid>
     </MudCardContent>
@@ -26,7 +31,7 @@
         Context.Attach(Faction);
     }
 
-    private async Task AdjustRepAsync(Faction faction)
+    private async Task AdjustRepAsync()
     {
         var dialog = await DialogService.ShowAsync<AdjustSelect>();
         var result = await dialog.Result;
@@ -36,7 +41,7 @@
             return;
         }
 
-        await faction.ChangeReputationAsync(adjustment.Delta, adjustment.Reason, Context);
+        await Faction.ChangeReputationAsync(adjustment.Delta, adjustment.Reason, Context);
     }
     
 }
