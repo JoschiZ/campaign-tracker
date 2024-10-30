@@ -1,12 +1,10 @@
 @page "/factions"
 @using Microsoft.EntityFrameworkCore
-@using SeasonOfGhosts.Components.Shared
-@using SeasonOfGhosts.Core
 @using SeasonOfGhosts.Core.Campaigns
 @using SeasonOfGhosts.Core.Characters
 @using SeasonOfGhosts.Core.Factions
 @inherits UnitOfWorkComponentBase
-@inject IDialogService DialogService
+
 <PageTitle>Factions</PageTitle>
 
 @if (_campaign is not null)
@@ -18,18 +16,7 @@
         @foreach (var faction in _campaign.Factions.Where(x => x.Name.Contains(_nameSearch)))
         {
             <MudItem xs="12" md="6">
-                <MudCard>
-                    <MudCardContent>
-                        <MudGrid>
-                            <MudItem xs="5">@faction.Name</MudItem>
-                            <MudItem xs="4">Reputation: @faction.Reputation</MudItem>
-                            <MudItem xs="3">
-                                <MudButton Variant="Variant.Filled" Size="Size.Small"
-                                           OnClick="() => AdjustRepAsync(faction)">Adjust</MudButton>
-                            </MudItem>
-                        </MudGrid>
-                    </MudCardContent>
-                </MudCard>
+                <FactionRow Faction="faction"></FactionRow>
             </MudItem>
         }
         <MudItem xs="12">
@@ -122,19 +109,6 @@
     {
         _model = new NewFaction();
         _createDialogVisible = false;
-    }
-
-    private async Task AdjustRepAsync(Faction faction)
-    {
-        var dialog = await DialogService.ShowAsync<AdjustSelect>();
-        var result = await dialog.Result;
-        
-        if (result?.Data is not Adjustment adjustment)
-        {
-            return;
-        }
-
-        await faction.ChangeReputationAsync(adjustment.Delta, adjustment.Reason, Context);
     }
 
     private class NewFaction

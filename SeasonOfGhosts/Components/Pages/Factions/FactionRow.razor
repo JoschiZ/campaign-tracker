@@ -1,0 +1,42 @@
+@using SeasonOfGhosts.Components.Shared
+@using SeasonOfGhosts.Core
+@using SeasonOfGhosts.Core.Factions
+@inherits UnitOfWorkComponentBase
+@inject IDialogService DialogService
+<MudCard>
+    <MudCardContent>
+        <MudGrid>
+            <MudItem xs="5">@Faction.Name</MudItem>
+            <MudItem xs="4">Reputation: @Faction.Reputation</MudItem>
+            <MudItem xs="3">
+                <MudButton Variant="Variant.Filled" Size="Size.Small"
+                           OnClick="() => AdjustRepAsync(Faction)">Adjust</MudButton>
+            </MudItem>
+        </MudGrid>
+    </MudCardContent>
+</MudCard>
+
+@code {
+    [Parameter, EditorRequired]
+    public required Faction Faction { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+        Context.Attach(Faction);
+    }
+
+    private async Task AdjustRepAsync(Faction faction)
+    {
+        var dialog = await DialogService.ShowAsync<AdjustSelect>();
+        var result = await dialog.Result;
+        
+        if (result?.Data is not Adjustment adjustment)
+        {
+            return;
+        }
+
+        await faction.ChangeReputationAsync(adjustment.Delta, adjustment.Reason, Context);
+    }
+    
+}
