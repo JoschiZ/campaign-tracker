@@ -14,6 +14,11 @@ public sealed class SeasonContext : DbContext
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
+#if DEBUG
+        optionsBuilder.EnableSensitiveDataLogging();
+        optionsBuilder.EnableDetailedErrors();
+#endif
+        
         optionsBuilder.AddInterceptors([new CreationInterceptor()]);
         base.OnConfiguring(optionsBuilder);
     }
