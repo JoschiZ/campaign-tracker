@@ -1,5 +1,7 @@
-﻿@using SeasonOfGhosts.Core.Campaigns
+﻿@using Microsoft.AspNetCore.Components.Server.ProtectedBrowserStorage
+@using SeasonOfGhosts.Core.Campaigns
 @inherits LayoutComponentBase
+@inject ProtectedLocalStorage LocalStorage
 
 <MudThemeProvider Theme="@_theme" IsDarkMode="_isDarkMode" />
 <MudPopoverProvider />
@@ -13,7 +15,7 @@
         <MudIconButton Icon="@(DarkLightModeButtonIcon)" Color="Color.Inherit" OnClick="@DarkModeToggle" />
         @if (_campaign is not null)
         {
-            <MudIconButton Icon="@Icons.Material.Filled.Logout" Color="Color.Error" OnClick="() => _campaign = null"></MudIconButton>
+            <MudIconButton Icon="@Icons.Material.Filled.Logout" Color="Color.Error" OnClick="ExitCampaignAsync"></MudIconButton>
         }
         </MudAppBar>
     <MudDrawer @bind-Open="_drawerOpen" ClipMode="DrawerClipMode.Always" Elevation="2">
@@ -110,9 +112,16 @@
 
     public string DarkLightModeButtonIcon => _isDarkMode switch
     {
-        true => Icons.Material.Rounded.AutoMode,
+        true => Icons.Material.Rounded.LightMode,
         false => Icons.Material.Outlined.DarkMode,
     };
+
+    private async Task ExitCampaignAsync()
+    {
+        await LocalStorage.DeleteAsync(StorageKeys.LastCampaignId);
+        _campaign = null;
+    }
+
 }
 
 

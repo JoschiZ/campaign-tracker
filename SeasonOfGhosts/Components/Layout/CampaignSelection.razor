@@ -1,7 +1,9 @@
+@using Microsoft.AspNetCore.Components.Server.ProtectedBrowserStorage
 @using Microsoft.EntityFrameworkCore
 @using SeasonOfGhosts.Core.Campaigns
 @using SeasonOfGhosts.Db
 @inject IDbContextFactory<SeasonContext> DbFactory;
+@inject ProtectedLocalStorage LocalStorage
 
 <MudOverlay DarkBackground bind-Visible="@_loading">
     <MudProgressCircular Indeterminate Color="Color.Primary"></MudProgressCircular>
@@ -41,6 +43,31 @@
     
     [Parameter]
     public EventCallback<Campaign?> SelectedCampaignChanged { get; set; }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        await base.OnAfterRenderAsync(firstRender);
+        if (!firstRender)
+        {
+            return;
+        }
+        var lastCampaign = await LocalStorage.GetAsync<CampaignId>(StorageKeys.LastCampaignId);
+        if (lastCampaign.Success)
+        {
+            await using var context = await DbFactory.CreateDbContextAsync();
+            SelectedCampaign = await context.Campaigns.FindAsync(lastCampaign.Value);
+            await OnSelectedCampaignChanged();
+        }
+    }
+
+    private async Task OnSelectedCampaignChanged()
+    {
+        if (SelectedCampaign is not null)
+        {
+            await LocalStorage.SetAsync(StorageKeys.LastCampaignId, SelectedCampaign.Id);   
+        }
+        await SelectedCampaignChanged.InvokeAsync(SelectedCampaign);
+    }
     
     private async Task SearchCampaign(string? code)
     {
@@ -55,7 +82,7 @@
             .Campaigns
             .Where(x => x.Code == code)
             .FirstOrDefaultAsync();
-        await SelectedCampaignChanged.InvokeAsync(SelectedCampaign);
+        await OnSelectedCampaignChanged();
         _loading = false;
     }
 
@@ -70,7 +97,7 @@
         context.Campaigns.Add(campaign);
         await context.SaveChangesAsync();
         SelectedCampaign = campaign;
-        await SelectedCampaignChanged.InvokeAsync(SelectedCampaign);
+        await OnSelectedCampaignChanged();
         _loading = false;
     }
 
