@@ -1,6 +1,8 @@
 ﻿@page "/"
+@using Microsoft.EntityFrameworkCore
 @using SeasonOfGhosts.Core.Campaigns
 @using SeasonOfGhosts.Core.Constants
+@using SeasonOfGhosts.Components.Pages.Stats
 @inject IJsApiService JsService
 @inject ISnackbar Snackbar
 @inherits UnitOfWorkComponentBase
@@ -8,16 +10,44 @@
 @if (Campaign is not null)
 {
     <PageTitle>@Campaign.Name</PageTitle>
-
-    <MudText Typo="Typo.h5">@Campaign.Name</MudText>
-    <MudText Inline Typo="Typo.subtitle1">Share Code: <MudButton OnClick="() => CopyToClipboard(Campaign.Code)" Variant="Variant.Text">@Campaign.Code</MudButton></MudText>
-
-    <MudGrid>
-        <MudItem xs="6" md="4"><MudButton EndIcon="@AppRoutes.Characters" Href="@AppRoutes.Characters" FullWidth Variant="Variant.Outlined">Characters</MudButton></MudItem>
-        <MudItem xs="6" md="4"><MudButton EndIcon="@AppRoutes.Stats" Href="@AppRoutes.Stats" FullWidth Variant="Variant.Outlined">Stats</MudButton></MudItem>
-        <MudItem xs="6" md="4"><MudButton EndIcon="@AppRoutes.Factions" Href="@AppRoutes.Factions" FullWidth Variant="Variant.Outlined">Factions</MudButton></MudItem>
-        <MudItem xs="6" md="4"><MudButton EndIcon="@AppRoutes.Settlements" Href="@AppRoutes.Settlements" FullWidth Variant="Variant.Outlined">Settlements</MudButton></MudItem>
-    </MudGrid>    
+    <MudStack>
+        
+    <MudCard Outlined>
+        <MudCardHeader>
+            <MudText Typo="Typo.h5">@Campaign.Name</MudText>
+        </MudCardHeader>
+        <MudCardContent>
+            <MudText Inline Typo="Typo.subtitle1">Share Code: <MudButton OnClick="() => CopyToClipboard(Campaign.Code)" Variant="Variant.Text">@Campaign.Code</MudButton></MudText>
+        </MudCardContent>
+    </MudCard>
+    
+    <MudCard Outlined>
+        <MudCardHeader>
+            <MudText Typo="Typo.h5">Stats</MudText>
+        </MudCardHeader>
+        <MudCardContent>
+            <MudGrid>
+                @foreach (var stat in Campaign.Stats)
+                {
+                    <MudItem xs="12" md="6">
+                        <StatRow Stat="@stat"></StatRow>
+                    </MudItem>
+                }
+            </MudGrid>
+        </MudCardContent>
+    </MudCard>
+    
+    <MudCard Outlined>
+        <MudCardContent>
+            <MudGrid>
+                <MudItem xs="6" md="4"><MudButton EndIcon="@AppRoutes.Characters" Href="@AppRoutes.Characters" FullWidth Variant="Variant.Outlined">Characters</MudButton></MudItem>
+                <MudItem xs="6" md="4"><MudButton EndIcon="@AppRoutes.Stats" Href="@AppRoutes.Stats" FullWidth Variant="Variant.Outlined">Stats</MudButton></MudItem>
+                <MudItem xs="6" md="4"><MudButton EndIcon="@AppRoutes.Factions" Href="@AppRoutes.Factions" FullWidth Variant="Variant.Outlined">Factions</MudButton></MudItem>
+                <MudItem xs="6" md="4"><MudButton EndIcon="@AppRoutes.Settlements" Href="@AppRoutes.Settlements" FullWidth Variant="Variant.Outlined">Settlements</MudButton></MudItem>
+            </MudGrid>
+        </MudCardContent>
+    </MudCard>
+    </MudStack>
 }
 
 @code{
@@ -30,7 +60,15 @@
     protected override async Task OnInitializedAsync()
     {
         await base.OnInitializedAsync();
-        Campaign = await Context.Campaigns.FindAsync(CampaignId);
+        Campaign = await Context
+                .Campaigns
+                .Where(x => x.Id == CampaignId)
+                .Include(x => x.Stats.Take(4))
+                .Include(x => x.Factions.Take(4))
+                .Include(x => x.MainSettlement)
+                .AsSplitQuery()
+                .AsNoTrackingWithIdentityResolution()
+                .FirstAsync();
     }
 
     private async Task CopyToClipboard(string content)
