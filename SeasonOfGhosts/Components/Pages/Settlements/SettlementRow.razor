@@ -16,6 +16,7 @@
                                  AdornmentIcon="@Icons.Material.Filled.Edit"
                                  OnAdornmentClick="AdjustPopulation"
                                  HideSpinButtons
+                                 ReadOnly
                                  Label="Population">
                 </MudNumericField>
             </MudItem>
@@ -25,6 +26,7 @@
                                  AdornmentIcon="@Icons.Material.Filled.Edit"
                                  OnAdornmentClick="AdjustLevel"
                                  HideSpinButtons
+                                 ReadOnly
                                  Label="Level">
                 </MudNumericField>
             </MudItem>
@@ -43,7 +45,7 @@
 
     private async Task AdjustPopulation()
     {
-        var dialog = await DialogService.ShowAsync<AdjustSelect>();
+        var dialog = await AdjustSelect.ShowAsync(DialogService, 100, 100);
         var result = await dialog.Result;
         if (result is not { Canceled: false, Data: Adjustment adjustment })
         {

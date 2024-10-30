@@ -6,7 +6,7 @@
     <DialogContent>
         <MudStack Justify="Justify.Center" AlignItems="AlignItems.Center">
             <MudText Color="Color.Primary">@_amount</MudText>
-            <MudSlider Step="1" Min="-10" Max="10" @bind-Value="@_amount"></MudSlider>
+            <MudSlider ValueLabel  Step="1" Min="@Min" Max="@Max" @bind-Value="@_amount"></MudSlider>
             <MudTextField Immediate @bind-Value="@_reason" MaxLength="50" Label="Reason"></MudTextField>    
         </MudStack>
     </DialogContent>
@@ -23,7 +23,21 @@
     [CascadingParameter]
     public required MudDialogInstance MudDialog { get; set; }
 
+    [Parameter] public int Max { get; set; } = 10;
+    [Parameter] public int Min { get; set; } = -10;
+
     private void Submit() => MudDialog.Close(DialogResult.Ok(new Adjustment(_amount, _reason)));
 
     private void Cancel() => MudDialog.Cancel();
+
+    public static Task<IDialogReference> ShowAsync(IDialogService dialogService, int min = 10, int max = 10)
+    {
+        var parameters = new DialogParameters<AdjustSelect>()
+        {
+            { x => x.Max, max },
+            { x => x.Min, min }
+        };
+
+        return dialogService.ShowAsync<AdjustSelect>("", parameters);
+    }
 }
