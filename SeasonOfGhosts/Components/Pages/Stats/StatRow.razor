@@ -8,25 +8,34 @@
     <MudCard>
         <MudCardContent>
             <MudGrid>
-                <MudItem xs="7"><MudText Typo="Typo.subtitle1">@Stat.Name</MudText></MudItem>
-                <MudItem xs="5"><MudButton Variant="Variant.Filled" OnClick="() => AdjustStat(Stat)">Adjust</MudButton></MudItem>
-                <MudItem xs="6">Value: @Stat.Value</MudItem>
+                <MudItem xs="7">
+                    <MudText Typo="Typo.subtitle1">@Stat.Name</MudText>
+                </MudItem>
+                <MudItem xs="5">
+                    <MudNumericField Value="Stat.Value"
+                                     Adornment="Adornment.End"
+                                     AdornmentIcon="@Icons.Material.Filled.Edit"
+                                     OnAdornmentClick="AdjustStat"
+                                     HideSpinButtons
+                                     ReadOnly
+                                     Label="Value">
+                    </MudNumericField>
+                </MudItem>
             </MudGrid>
         </MudCardContent>
     </MudCard>
 </MudItem>
 
 @code {
-    [Parameter, EditorRequired]
-    public required Stat Stat { get; set; }
+    [Parameter, EditorRequired] public required Stat Stat { get; set; }
 
     protected override async Task OnInitializedAsync()
-    { 
+    {
         await base.OnInitializedAsync();
         Context.Attach(Stat);
     }
 
-    private async Task AdjustStat(Stat stat)
+    private async Task AdjustStat()
     {
         var dialog = await DialogService.ShowAsync<AdjustSelect>();
         var result = await dialog.Result;
@@ -41,6 +50,7 @@
             return;
         }
 
-        await stat.ChangeStatAsync(adjustment.Delta, adjustment.Reason, Context);
+        await Stat.ChangeStatAsync(adjustment.Delta, adjustment.Reason, Context);
     }
+
 }
