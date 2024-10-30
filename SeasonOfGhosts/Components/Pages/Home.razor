@@ -1,8 +1,8 @@
 ﻿@page "/"
 @using Microsoft.EntityFrameworkCore
 @using SeasonOfGhosts.Core.Campaigns
-@using SeasonOfGhosts.Core.Constants
 @using SeasonOfGhosts.Components.Pages.Stats
+@using SeasonOfGhosts.Components.Pages.Factions
 @inject IJsApiService JsService
 @inject ISnackbar Snackbar
 @inherits UnitOfWorkComponentBase
@@ -36,6 +36,22 @@
             </MudGrid>
         </MudCardContent>
     </MudCard>
+
+        <MudCard Outlined>
+            <MudCardHeader>
+                <MudText Typo="Typo.h5">Factions</MudText>
+            </MudCardHeader>
+            <MudCardContent>
+                <MudGrid>
+                    @foreach (var stat in Campaign.Factions)
+                    {
+                    <MudItem xs="12" md="6">
+                        <FactionRow Faction="@stat"></FactionRow>
+                    </MudItem>
+                    }
+                </MudGrid>
+            </MudCardContent>
+        </MudCard>
     
     <MudCard Outlined>
         <MudCardContent>
