@@ -1,3 +1,5 @@
+using SeasonOfGhosts.Core.Characters;
+
 namespace SeasonOfGhosts.Core.Constants;
 
 public static class AppRoutes
@@ -7,4 +9,7 @@ public static class AppRoutes
     public const string Stats = "/stats";
     public const string Factions = "/factions";
     public const string Settlements = "/settlements";
+
+    public const string CharacterPage = "/characters/{id}";
+    public static string GetCharacterPage(CharacterId id) => $"/characters/{id}";
 }

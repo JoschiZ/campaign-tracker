@@ -16,7 +16,7 @@
             <MudCard>
                 <MudCardContent >
                     <MudGrid>
-                        <MudItem xs="7"><MudText>@character.Name</MudText></MudItem>
+                        <MudItem xs="7"><MudButton Variant="Variant.Text" Href="@AppRoutes.GetCharacterPage(character.Id)">@character.Name</MudButton></MudItem>
                         <MudItem xs="5"><AttitudeSelect Character="character"></AttitudeSelect></MudItem>
                         <MudItem xs="12">
                             <MudStack Row>

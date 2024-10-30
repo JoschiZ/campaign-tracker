@@ -1,0 +1,162 @@
+@page "/characters/{id:int}"
+@using Microsoft.EntityFrameworkCore
+@using SeasonOfGhosts.Core.Campaigns
+@using SeasonOfGhosts.Core.Characters
+@using SeasonOfGhosts.Core.Factions
+@inherits UnitOfWorkComponentBase
+@inject IDialogService DialogService
+@inject NavigationManager NavManager
+
+@if (_character is not null)
+{
+    <MudCard>
+        <MudCardContent>
+            <MudGrid>
+                <MudItem xs="7">
+                    <MudText Typo="Typo.h4">@_character.Name</MudText>
+                </MudItem>
+                <MudItem xs="5">
+                    <AttitudeSelect @bind-Character="_character"></AttitudeSelect>                    
+                </MudItem>
+                <MudItem xs="6">
+                    <MudText Typo="Typo.subtitle1">@_character.ShortDescription</MudText>
+                </MudItem>
+                <MudItem xs="6">
+                    <MudStack Row AlignItems="AlignItems.Center" Justify="Justify.FlexEnd">
+                        @foreach (var faction in _character.Factions)
+                        {
+                            <MudChip T="Faction" Value="faction" OnClose="() => RemoveFaction(faction)">@faction.Name</MudChip>
+                        }
+                    </MudStack>
+                </MudItem>
+            </MudGrid>
+        </MudCardContent>
+        <MudCardActions>
+            <MudButton Variant="Variant.Filled" Color="Color.Error" OnClick="DeleteCharacter">Delete</MudButton>
+            <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="() => _editFormVisible = true">Edit</MudButton>
+        </MudCardActions>
+    </MudCard>
+    
+    <MudDialog @bind-Visible="@_editFormVisible">
+        <TitleContent>Edit @_character.Name</TitleContent>
+        <DialogContent>
+            <MudForm @ref="@_editForm">
+                <MudTextField Label="Name" @bind-Value="_character.Name"></MudTextField>
+                <MudTextField Label="Title / Profession" @bind-Value="_character.ShortDescription"></MudTextField>
+                <MudTextField Label="Description" @bind-Value="_character.Description" AutoGrow MaxLength="100"></MudTextField>
+                <MudAutocomplete ValueChanged="@(faction => _character.Factions.Add(faction))" Label="Add Faction" ShowProgressIndicator ToStringFunc="x => x.Name" T="Faction" SearchFunc="SearchFaction"></MudAutocomplete>
+            </MudForm>
+        </DialogContent>
+        <DialogActions>
+            <MudButton Variant="Variant.Filled" Color="Color.Error" OnClick="CancelEditAsync">Cancel</MudButton>
+            <MudButton Variant="Variant.Filled" Color="Color.Success" OnClick="SaveEntityAsync">Save</MudButton>
+        </DialogActions>
+    </MudDialog>
+}
+else
+{
+    @if (_notFound)
+    {
+        <NotFoundDisplay></NotFoundDisplay>   
+    }
+    else
+    {
+        <MudProgressCircular Indeterminate Color="Color.Primary"></MudProgressCircular>
+    }
+}
+
+@code {
+    [Parameter]
+    public required int Id { get; set; }
+    
+    [CascadingParameter]
+    public required CampaignId CampaignId { get; set; }
+
+    private Character? _character;
+    private bool _notFound;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+        _character = await Context
+            .Campaigns
+            .Where(x => x.Id == CampaignId)
+            .SelectMany(x => x.Characters)
+            .Where(x => x.Id == new CharacterId(Id))
+            .Include(x => x.Factions)
+            .Include(x => x.Log)
+            .FirstOrDefaultAsync();
+        _notFound = _character is null;
+    }
+
+    private IEnumerable<Faction>? _factions;
+    private MudForm? _editForm;
+    private bool _editFormVisible;
+
+    private async Task<IEnumerable<Faction>> SearchFaction(string searchText, CancellationToken cancellationToken)
+    {
+        _factions ??= await Context
+            .Campaigns
+            .Where(x => x.Id == CampaignId)
+            .Select(x => x.Factions)
+            .FirstAsync(cancellationToken);
+
+        return _factions
+            .Where(x => !_character!.Factions.Select(faction => faction.Id).Contains(x.Id))
+            .Where(x => x.Name.Contains(searchText));
+    }
+
+    private async Task RemoveFaction(Faction faction)
+    {
+        if (_character is null)
+        {
+            return;
+        }
+        _character.Factions.Remove(faction);
+        await Context.SaveChangesAsync();
+    }
+
+    private async Task CancelEditAsync()
+    {
+        if (_editForm is {IsTouched: true})
+        {
+            _character = await Context
+                .Campaigns
+                .Where(x => x.Id == CampaignId)
+                .SelectMany(x => x.Characters)
+                .Where(x => x.Id == new CharacterId(Id))
+                .Include(x => x.Factions)
+                .Include(x => x.Log)
+                .FirstOrDefaultAsync();
+        }
+
+        _editFormVisible = false;
+    }
+
+    private async Task SaveEntityAsync()
+    {
+        await Context.SaveChangesAsync();
+        _editFormVisible = false;
+    }
+
+    private async Task DeleteCharacter(MouseEventArgs arg)
+    {
+        if (_character is null)
+        {
+            return;
+        }
+
+        var dialog = await DialogService.ShowAsync<ConfirmDialog>();
+        var result = await dialog.Result;
+
+        if (result is not {Canceled: false})
+        {
+            return;
+        }
+
+        Context.Remove(_character);
+        await Context.SaveChangesAsync();
+        NavManager.NavigateTo(AppRoutes.Characters);
+    }
+
+}
