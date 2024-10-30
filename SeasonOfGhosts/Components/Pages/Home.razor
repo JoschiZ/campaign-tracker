@@ -3,6 +3,7 @@
 @using SeasonOfGhosts.Core.Campaigns
 @using SeasonOfGhosts.Components.Pages.Stats
 @using SeasonOfGhosts.Components.Pages.Factions
+@using SeasonOfGhosts.Components.Pages.Settlements
 @inject IJsApiService JsService
 @inject ISnackbar Snackbar
 @inherits UnitOfWorkComponentBase
@@ -12,16 +13,33 @@
     <PageTitle>@Campaign.Name</PageTitle>
     <MudStack>
         
-    <MudCard Outlined>
-        <MudCardHeader>
-            <MudText Typo="Typo.h5">@Campaign.Name</MudText>
-        </MudCardHeader>
-        <MudCardContent>
-            <MudText Inline Typo="Typo.subtitle1">Share Code: <MudButton OnClick="() => CopyToClipboard(Campaign.Code)" Variant="Variant.Text">@Campaign.Code</MudButton></MudText>
-        </MudCardContent>
-    </MudCard>
+        <MudCard Outlined>
+            <MudCardHeader>
+                <MudText Typo="Typo.h5">@Campaign.Name</MudText>
+            </MudCardHeader>
+            <MudCardContent>
+                <MudText Inline Typo="Typo.subtitle1">Share Code: <MudButton OnClick="() => CopyToClipboard(Campaign.Code)" Variant="Variant.Text">@Campaign.Code</MudButton></MudText>
+            </MudCardContent>
+        </MudCard>
+        
+        
+        <MudCard>
+            <MudCardHeader>
+                <MudText Typo="Typo.h5">Main Settlement</MudText>
+            </MudCardHeader>
+            <MudCardContent>
+                @if (Campaign.MainSettlement is not null)
+                {
+                    <SettlementRow Settlement="Campaign.MainSettlement"></SettlementRow>   
+                }
+                else
+                {
+                    <MudText>No main settlement selected</MudText>
+                }
+            </MudCardContent>
+        </MudCard>
     
-    <MudCard Outlined>
+        <MudCard Outlined>
         <MudCardHeader>
             <MudText Typo="Typo.h5">Stats</MudText>
         </MudCardHeader>
