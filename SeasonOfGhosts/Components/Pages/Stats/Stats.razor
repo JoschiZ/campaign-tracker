@@ -1,11 +1,8 @@
 @page "/stats"
 @using Microsoft.EntityFrameworkCore
-@using SeasonOfGhosts.Components.Shared
-@using SeasonOfGhosts.Core
 @using SeasonOfGhosts.Core.Campaigns
 @using SeasonOfGhosts.Core.Stats
 @inherits UnitOfWorkComponentBase
-@inject IDialogService DialogService
 <PageTitle>Stats</PageTitle>
 
 @if (_campaign is not null)
@@ -16,17 +13,7 @@
         </MudItem>
         @foreach (var stat in _campaign.Stats.Where(x => x.Name.Contains(_nameSearch)))
         {
-            <MudItem xs="12" md="6">
-                <MudCard>
-                    <MudCardContent>
-                        <MudGrid>
-                            <MudItem xs="7"><MudText Typo="Typo.subtitle1">@stat.Name</MudText></MudItem>
-                            <MudItem xs="5"><MudButton Variant="Variant.Filled" OnClick="() => AdjustStat(stat)">Adjust</MudButton></MudItem>
-                            <MudItem xs="6">Value: @stat.Value</MudItem>
-                        </MudGrid>
-                    </MudCardContent>
-                </MudCard>
-            </MudItem>
+            <StatRow Stat="stat"></StatRow>
         }
         <MudItem xs="12">
             <MudButton
@@ -101,23 +88,6 @@
         _model = new CreateNewStat();
     }
 
-    private async Task AdjustStat(Stat stat)
-    {
-        var dialog = await DialogService.ShowAsync<AdjustSelect>();
-        var result = await dialog.Result;
-
-        if (result is not { Canceled: false })
-        {
-            return;
-        }
-
-        if (result.Data is not Adjustment adjustment)
-        {
-            return;
-        }
-
-        await stat.ChangeStatAsync(adjustment.Delta, adjustment.Reason, Context);
-    }
 
     private class CreateNewStat
     {

@@ -130,6 +130,12 @@
     private async Task SaveNewCharacterAsync()
     {
         var campaign = await Context.Campaigns.FindAsync(CampaignId);
+
+        if (campaign is null)
+        {
+            return;
+        }
+        
         var character = new Character()
         {
             Name = _model.Name,
