@@ -43,6 +43,7 @@
                 <MudTextField Label="Name" @bind-Value="@_model.Name"></MudTextField>
                 <MudNumericField Label="Level" @bind-Value="@_model.Level"></MudNumericField>
                 <MudNumericField Label="Population" @bind-Value="@_model.Population"></MudNumericField>
+                <MudCheckBox Label="Main Settlement" @bind-Value="@_model.IsMainSettlement"></MudCheckBox>
             </MudForm>
         </DialogContent>
         <DialogActions>
@@ -96,6 +97,11 @@
             Level = _model.Level,
             Population = _model.Population
         };
+
+        if (_model.IsMainSettlement)
+        {
+            _campaign.MainSettlement = settlement;
+        }
         
         _campaign.Settlements.Add(settlement);
         await Context.SaveChangesAsync();
@@ -108,6 +114,6 @@
         public string Name { get; set; } = "";
         public int Level { get; set; } = 1;
         public int Population { get; set; }
-
+        public bool IsMainSettlement { get; set; }
     }
 }
