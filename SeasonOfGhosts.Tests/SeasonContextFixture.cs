@@ -21,7 +21,7 @@ public class SeasonContextFixture : IAsyncLifetime
         return new SeasonContext(options);
     }
 
-    internal async Task<SeasonContext> GetContextAsync()
+    public async Task<SeasonContext> GetContextAsync()
     {
         var context = GetContext();
         await context.Database.BeginTransactionAsync();

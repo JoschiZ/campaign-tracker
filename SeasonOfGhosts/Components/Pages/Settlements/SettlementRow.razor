@@ -7,21 +7,33 @@
 <MudCard>
     <MudCardContent>
         <MudGrid>
-            <MudItem xs="12"><MudText Typo="Typo.subtitle1">@Settlement.Name</MudText></MudItem>
-            <MudNumericField Value="Settlement.Population"
-                             Adornment="Adornment.End"
-                             AdornmentText="Adjust"
-                             AdornmentIcon="@Icons.Material.Filled.Edit"
-                             HideSpinButtons
-                             Label="Population"></MudNumericField>
-            <MudNumericField Value="Settlement.Level" Label="Level"></MudNumericField>
+            <MudItem xs="12">
+                <MudText Typo="Typo.subtitle1">@Settlement.Name</MudText>
+            </MudItem>
+            <MudItem xs="6">
+                <MudNumericField Value="Settlement.Population"
+                                 Adornment="Adornment.End"
+                                 AdornmentIcon="@Icons.Material.Filled.Edit"
+                                 OnAdornmentClick="AdjustPopulation"
+                                 HideSpinButtons
+                                 Label="Population">
+                </MudNumericField>
+            </MudItem>
+            <MudItem xs="6">
+                <MudNumericField Value="Settlement.Level"
+                                 Adornment="Adornment.End"
+                                 AdornmentIcon="@Icons.Material.Filled.Edit"
+                                 OnAdornmentClick="AdjustLevel"
+                                 HideSpinButtons
+                                 Label="Level">
+                </MudNumericField>
+            </MudItem>
         </MudGrid>
     </MudCardContent>
 </MudCard>
 
 @code {
-    [Parameter, EditorRequired]
-    public required Settlement Settlement { get; set; }
+    [Parameter, EditorRequired] public required Settlement Settlement { get; set; }
 
     protected override async Task OnInitializedAsync()
     {
@@ -37,8 +49,20 @@
         {
             return;
         }
-        
-        
+
+        await Settlement.AdjustPopulationAsync(adjustment, Context);
+    }
+
+    private async Task AdjustLevel()
+    {
+        var dialog = await DialogService.ShowAsync<AdjustSelect>();
+        var result = await dialog.Result;
+        if (result is not { Canceled: false, Data: Adjustment adjustment })
+        {
+            return;
+        }
+
+        await Settlement.AdjustPopulationAsync(adjustment, Context);
     }
 
 }

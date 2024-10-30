@@ -4,8 +4,11 @@
         Adjust
     </TitleContent>
     <DialogContent>
-        <MudSlider Step="1" Min="-10" Max="10" @bind-Value="@_amount"></MudSlider>
-        <MudTextField Immediate @bind-Value="@_reason" MaxLength="50" Label="Reason"></MudTextField>
+        <MudStack Justify="Justify.Center" AlignItems="AlignItems.Center">
+            <MudText Color="Color.Primary">@_amount</MudText>
+            <MudSlider Step="1" Min="-10" Max="10" @bind-Value="@_amount"></MudSlider>
+            <MudTextField Immediate @bind-Value="@_reason" MaxLength="50" Label="Reason"></MudTextField>    
+        </MudStack>
     </DialogContent>
     <DialogActions>
         <MudButton Variant="Variant.Filled" Color="Color.Warning" OnClick="Cancel">Cancel</MudButton>

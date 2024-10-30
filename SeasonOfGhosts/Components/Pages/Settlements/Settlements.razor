@@ -13,15 +13,7 @@
         @foreach (var settlement in _campaign.Settlements.Where(x => x.Name.Contains(_nameSearch)))
         {
             <MudItem xs="12" md="6">
-                <MudCard>
-                    <MudCardContent>
-                        <MudGrid>
-                            <MudItem xs="7"><MudText Typo="Typo.subtitle1">@settlement.Name</MudText></MudItem>
-                            <MudItem xs="5">Level: @settlement.Level</MudItem>
-                            <MudItem xs="12">Population: @settlement.Population</MudItem>
-                        </MudGrid>
-                    </MudCardContent>
-                </MudCard>
+                    <SettlementRow Settlement="settlement"></SettlementRow>
             </MudItem>
         }
         <MudItem xs="12">

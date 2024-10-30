@@ -24,7 +24,6 @@ public class StatTests : IClassFixture<SeasonContextFixture>
         var campaign = new Campaign()
         {
             Name = "Test Campaign",
-            UrlSlug = "abc"
         };
         
         var stat = new Stat()

@@ -20,7 +20,7 @@ public sealed class Settlement
     public int Population { get; private set; }
     public List<SettlementLog> Log { get; init; } = [];
 
-    private async Task<SettlementLevelLog?> AdjustLevelAsync(Adjustment adjustment, SeasonContext seasonContext)
+    public async Task<SettlementLevelLog?> AdjustLevelAsync(Adjustment adjustment, SeasonContext seasonContext)
     {
         var settlement = await seasonContext.FindAsync<Settlement>(Id);
         if (settlement is null)
@@ -42,7 +42,7 @@ public sealed class Settlement
 
         return log;
     }
-    private async Task<SettlementPopulationLog?> AdjustPopulationAsync(Adjustment adjustment, SeasonContext seasonContext)
+    public async Task<SettlementPopulationLog?> AdjustPopulationAsync(Adjustment adjustment, SeasonContext seasonContext)
     {
         var settlement = await seasonContext.FindAsync<Settlement>(Id);
         if (settlement is null)
