@@ -1,8 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using SeasonOfGhosts.Core.Settlements;
 
-namespace SeasonOfGhosts.Core.Cities;
+namespace SeasonOfGhosts.Core.Settlements;
 
 public sealed class SettlementConfiguration : IEntityTypeConfiguration<Settlement>
 {
@@ -12,5 +11,6 @@ public sealed class SettlementConfiguration : IEntityTypeConfiguration<Settlemen
         builder.Property(x => x.Id).ValueGeneratedNever();
         builder.Property(x => x.Name).IsRequired().HasMaxLength(50);
         builder.Property(x => x.Level).IsRequired();
+        builder.HasMany(x => x.Log).WithOne(x => x.Settlement).IsRequired();
     }
 }

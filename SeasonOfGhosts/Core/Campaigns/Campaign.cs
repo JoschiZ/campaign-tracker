@@ -1,6 +1,5 @@
 using NanoidDotNet;
 using SeasonOfGhosts.Core.Characters;
-using SeasonOfGhosts.Core.Cities;
 using SeasonOfGhosts.Core.Factions;
 using SeasonOfGhosts.Core.Settlements;
 using SeasonOfGhosts.Core.Stats;

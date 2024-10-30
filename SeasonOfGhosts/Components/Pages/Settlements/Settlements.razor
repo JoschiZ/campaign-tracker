@@ -90,12 +90,10 @@
             return;
         }
         
-        var settlement = new Settlement()
+        var settlement = new Settlement(_model.Level, _model.Population)
         {
             Campaign = _campaign,
             Name = _model.Name,
-            Level = _model.Level,
-            Population = _model.Population
         };
 
         if (_model.IsMainSettlement)

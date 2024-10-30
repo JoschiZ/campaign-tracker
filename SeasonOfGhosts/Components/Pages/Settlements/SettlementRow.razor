@@ -1,0 +1,44 @@
+@using SeasonOfGhosts.Components.Shared
+@using SeasonOfGhosts.Core
+@using SeasonOfGhosts.Core.Settlements
+@inherits UnitOfWorkComponentBase
+@inject IDialogService DialogService
+
+<MudCard>
+    <MudCardContent>
+        <MudGrid>
+            <MudItem xs="12"><MudText Typo="Typo.subtitle1">@Settlement.Name</MudText></MudItem>
+            <MudNumericField Value="Settlement.Population"
+                             Adornment="Adornment.End"
+                             AdornmentText="Adjust"
+                             AdornmentIcon="@Icons.Material.Filled.Edit"
+                             HideSpinButtons
+                             Label="Population"></MudNumericField>
+            <MudNumericField Value="Settlement.Level" Label="Level"></MudNumericField>
+        </MudGrid>
+    </MudCardContent>
+</MudCard>
+
+@code {
+    [Parameter, EditorRequired]
+    public required Settlement Settlement { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+        Context.Attach(Settlement);
+    }
+
+    private async Task AdjustPopulation()
+    {
+        var dialog = await DialogService.ShowAsync<AdjustSelect>();
+        var result = await dialog.Result;
+        if (result is not { Canceled: false, Data: Adjustment adjustment })
+        {
+            return;
+        }
+        
+        
+    }
+
+}

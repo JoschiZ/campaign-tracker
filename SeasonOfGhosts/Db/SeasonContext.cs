@@ -1,10 +1,10 @@
 using Microsoft.EntityFrameworkCore;
 using SeasonOfGhosts.Core.Campaigns;
 using SeasonOfGhosts.Core.Characters;
-using SeasonOfGhosts.Core.Cities;
 using SeasonOfGhosts.Core.Factions;
 using SeasonOfGhosts.Core.Settlements;
 using SeasonOfGhosts.Core.Stats;
+using SettlementId = SeasonOfGhosts.Core.Settlements.SettlementId;
 
 namespace SeasonOfGhosts.Db;
 
@@ -34,7 +34,7 @@ public sealed class SeasonContext : DbContext
         configurationBuilder.Properties<StatLogId>().HaveConversion<StatLogId.EfCoreValueConverter>();
         configurationBuilder.Properties<FactionLogId>().HaveConversion<FactionLogId.EfCoreValueConverter>();
         configurationBuilder.Properties<CharacterLogId>().HaveConversion<CharacterLogId.EfCoreValueConverter>();
-
+        configurationBuilder.Properties<SettlementLogId>().HaveConversion<SettlementLogId.EfCoreValueConverter>();
         
         base.ConfigureConventions(configurationBuilder);
     }
@@ -46,4 +46,7 @@ public sealed class SeasonContext : DbContext
     private DbSet<Faction> Factions { get; set; }
     private DbSet<StatLog> StatLogs { get; set; }
     private DbSet<FactionLog> FactionLogs { get; set; }
+    private DbSet<SettlementLog> SettlementLogs { get; set; }
+    private DbSet<SettlementPopulationLog> SettlementPopulationLogs { get; set; }
+    private DbSet<SettlementLevelLog> SettlementLevelLogs { get; set; }
 }
