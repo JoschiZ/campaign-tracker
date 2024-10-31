@@ -35,8 +35,8 @@ public sealed class Character
             Reason = reason,
         };
         
-        Attitude = newAttitude;
-        Log.Add(log);
+        character.Log.Add(log);
+        character.Attitude = newAttitude;
         
         await context.SaveChangesAsync();
         return log;

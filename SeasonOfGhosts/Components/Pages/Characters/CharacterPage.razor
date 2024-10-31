@@ -16,7 +16,7 @@
                     <MudText Typo="Typo.h4">@_character.Name</MudText>
                 </MudItem>
                 <MudItem xs="5">
-                    <AttitudeSelect @bind-Character="_character"></AttitudeSelect>                    
+                    <AttitudeSelect @bind-Character="_character"></AttitudeSelect>
                 </MudItem>
                 <MudItem xs="6">
                     <MudText Typo="Typo.subtitle1">@_character.ShortDescription</MudText>
@@ -29,6 +29,23 @@
                         }
                     </MudStack>
                 </MudItem>
+                @foreach (var log in _character.Log.OrderByDescending(x => x.CreatedAt).Take(_logCount))
+                {
+                    <MudItem xs="12">
+                        <MudCard Outlined>
+                            <MudCardContent>
+                                <MudGrid>
+                                    <MudItem xs="5">@log.Reason</MudItem>
+                                    <MudItem xs="3">@log.NewAttitude</MudItem>
+                                    <MudItem xs="4">@log.CreatedAt.ToString("yyyy-M-d")</MudItem>
+                                </MudGrid>
+                            </MudCardContent>
+                        </MudCard>
+                    </MudItem>
+                }
+                <MudItem xs="12">
+                    <MudButton FullWidth Color="Color.Primary" Variant="Variant.Filled" OnClick="() => _logCount += 4">Load More</MudButton>
+                </MudItem>
             </MudGrid>
         </MudCardContent>
         <MudCardActions>
@@ -36,7 +53,7 @@
             <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="() => _editFormVisible = true">Edit</MudButton>
         </MudCardActions>
     </MudCard>
-    
+
     <MudDialog @bind-Visible="@_editFormVisible">
         <TitleContent>Edit @_character.Name</TitleContent>
         <DialogContent>
@@ -57,7 +74,7 @@ else
 {
     @if (_notFound)
     {
-        <NotFoundDisplay></NotFoundDisplay>   
+        <NotFoundDisplay></NotFoundDisplay>
     }
     else
     {
@@ -66,14 +83,13 @@ else
 }
 
 @code {
-    [Parameter]
-    public required int Id { get; set; }
-    
-    [CascadingParameter]
-    public required CampaignId CampaignId { get; set; }
+    [Parameter] public required int Id { get; set; }
+
+    [CascadingParameter] public required CampaignId CampaignId { get; set; }
 
     private Character? _character;
     private bool _notFound;
+    private int _logCount = 4;
 
     protected override async Task OnInitializedAsync()
     {
@@ -112,13 +128,14 @@ else
         {
             return;
         }
+
         _character.Factions.Remove(faction);
         await Context.SaveChangesAsync();
     }
 
     private async Task CancelEditAsync()
     {
-        if (_editForm is {IsTouched: true})
+        if (_editForm is { IsTouched: true })
         {
             _character = await Context
                 .Campaigns
@@ -149,7 +166,7 @@ else
         var dialog = await DialogService.ShowAsync<ConfirmDialog>();
         var result = await dialog.Result;
 
-        if (result is not {Canceled: false})
+        if (result is not { Canceled: false })
         {
             return;
         }

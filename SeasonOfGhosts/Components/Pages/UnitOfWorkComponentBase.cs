@@ -9,7 +9,7 @@ public abstract class UnitOfWorkComponentBase : ComponentBase, IDisposable, IAsy
     [Inject]
     public required IDbContextFactory<SeasonContext> ContextFactory { get; init; }
     
-    protected SeasonContext Context { get; set; } = null!;
+    protected SeasonContext Context { get; private set; } = null!;
 
     protected override async Task OnInitializedAsync()
     {

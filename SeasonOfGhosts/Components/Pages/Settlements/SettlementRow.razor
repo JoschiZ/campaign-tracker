@@ -45,7 +45,7 @@
 
     private async Task AdjustPopulation()
     {
-        var dialog = await AdjustSelect.ShowAsync(DialogService, 100, 100);
+        var dialog = await AdjustSelect.ShowAsync(DialogService, -100, 100);
         var result = await dialog.Result;
         if (result is not { Canceled: false, Data: Adjustment adjustment })
         {
@@ -64,7 +64,7 @@
             return;
         }
 
-        await Settlement.AdjustPopulationAsync(adjustment, Context);
+        await Settlement.AdjustLevelAsync(adjustment, Context);
     }
 
 }
