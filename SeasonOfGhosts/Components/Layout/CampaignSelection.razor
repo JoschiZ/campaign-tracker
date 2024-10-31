@@ -1,9 +1,10 @@
+@using Blazored.LocalStorage
 @using Microsoft.AspNetCore.Components.Server.ProtectedBrowserStorage
 @using Microsoft.EntityFrameworkCore
 @using SeasonOfGhosts.Core.Campaigns
 @using SeasonOfGhosts.Db
 @inject IDbContextFactory<SeasonContext> DbFactory;
-@inject ProtectedLocalStorage LocalStorage
+@inject ILocalStorageService LocalStorage
 @inject ISnackbar Snackbar
 
 
@@ -12,13 +13,13 @@
         <MudText Typo="Typo.h5">Enter your campaign code</MudText>
         <MudGrid>
             <MudItem xs="12" md="7">
-                <MudCodeInput Variant="Variant.Outlined"
+                <MudTextField Variant="Variant.Outlined"
                               Margin="Margin.Dense"
                               @bind-Value="_campaignCode"
                               @bind-Value:after="() => SearchCampaign(_campaignCode)"
-                              Count="10"
-                              Spacing="1"
-                              ></MudCodeInput>
+                              MaxLength="10"
+                              Immediate
+                              ></MudTextField>
             </MudItem>
             <MudItem xs="12" md="5">
                 <MudLoadingButton Variant="Variant.Filled" FullWidth Disabled="@(_campaignCode?.Length != 10)" OnClick="() => SearchCampaign(_campaignCode)">Search</MudLoadingButton>
@@ -73,12 +74,13 @@
             return;
         }
         
-        var lastCampaign = await LocalStorage.GetAsync<CampaignId>(StorageKeys.LastCampaignId);
-        if (lastCampaign.Success)
+        
+        if (await LocalStorage.ContainKeyAsync(StorageKeys.LastCampaignId))
         {
+            var lastCampaign = await LocalStorage.GetItemAsync<CampaignId>(StorageKeys.LastCampaignId);
             await using var context = await DbFactory.CreateDbContextAsync();
             _loading = true;
-            SelectedCampaign = await context.Campaigns.FindAsync(lastCampaign.Value);
+            SelectedCampaign = await context.Campaigns.FindAsync(lastCampaign);
             _loading = false;
             await OnSelectedCampaignChanged();
         }
@@ -88,7 +90,7 @@
     {
         if (SelectedCampaign is not null)
         {
-            await LocalStorage.SetAsync(StorageKeys.LastCampaignId, SelectedCampaign.Id);   
+            await LocalStorage.SetItemAsync(StorageKeys.LastCampaignId, SelectedCampaign.Id);   
         }
         await SelectedCampaignChanged.InvokeAsync(SelectedCampaign);
     }

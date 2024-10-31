@@ -1,12 +1,21 @@
+using Blazored.LocalStorage;
 using Microsoft.EntityFrameworkCore;
 using MudBlazor;
 using MudBlazor.Services;
 using MudExtensions.Services;
 using SeasonOfGhosts.Components;
 using SeasonOfGhosts.Db;
+using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
 
+builder.Services.AddSerilog((provider, configuration) =>
+{
+    configuration
+        .ReadFrom.Configuration(builder.Configuration);
+});
+
+builder.Services.AddBlazoredLocalStorage();
 
 builder.Configuration
     .AddJsonFile("secret.appsettings.json", optional: true)
