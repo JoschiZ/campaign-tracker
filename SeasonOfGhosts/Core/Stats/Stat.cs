@@ -44,7 +44,7 @@ public sealed class StatConfiguration: IEntityTypeConfiguration<Stat>
     public void Configure(EntityTypeBuilder<Stat> builder)
     {
         builder.HasKey(x => x.Id);
-        builder.Property(x => x.Name).ValueGeneratedOnAdd();
+        builder.Property(x => x.Id).ValueGeneratedOnAdd();
         builder.Property(x => x.Name).HasMaxLength(50);
         builder.HasMany(x => x.Log).WithOne(x => x.Stat).IsRequired();
     }
