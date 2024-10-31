@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+using MudBlazor;
 using MudBlazor.Services;
 using MudExtensions.Services;
 using SeasonOfGhosts.Components;
@@ -13,7 +14,10 @@ builder.Configuration
 
 
 // Add MudBlazor services
-builder.Services.AddMudServices();
+builder.Services.AddMudServices(x =>
+{
+    x.SnackbarConfiguration.PositionClass = Defaults.Classes.Position.BottomRight;
+});
 builder.Services.AddMudExtensions();
 builder.Services.AddDbContextFactory<SeasonContext>(x =>
 {

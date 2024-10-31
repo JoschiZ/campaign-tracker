@@ -6,6 +6,7 @@
 @using SeasonOfGhosts.Components.Pages.Settlements
 @inject IJsApiService JsService
 @inject ISnackbar Snackbar
+@inject NavigationManager NavManager
 @inherits UnitOfWorkComponentBase
 
 @if (Campaign is not null)
@@ -18,7 +19,8 @@
                 <MudText Typo="Typo.h5">@Campaign.Name</MudText>
             </MudCardHeader>
             <MudCardContent>
-                <MudText Inline Typo="Typo.subtitle1">Share Code: <MudButton OnClick="() => CopyToClipboard(Campaign.Code)" Variant="Variant.Text">@Campaign.Code</MudButton></MudText>
+                <MudText Inline Typo="Typo.subtitle1">Share Code: <MudButton OnClick="() => CopyToClipboard(Campaign.Code)" Variant="Variant.Outlined">@Campaign.Code</MudButton></MudText>
+                <MudButton Variant="Variant.Filled" OnClick="CopyShareLinkAsync">Copy share link</MudButton>
             </MudCardContent>
         </MudCard>
         
@@ -110,4 +112,10 @@
         await JsService.CopyToClipboardAsync(content);
         Snackbar.Add("Copied!");
     }
+
+    private async Task CopyShareLinkAsync()
+    {
+        await JsService.CopyToClipboardAsync(NavManager.Uri + $"?code={Campaign?.Code}");
+    }
+
 }

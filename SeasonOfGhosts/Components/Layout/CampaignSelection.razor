@@ -4,19 +4,24 @@
 @using SeasonOfGhosts.Db
 @inject IDbContextFactory<SeasonContext> DbFactory;
 @inject ProtectedLocalStorage LocalStorage
+@inject ISnackbar Snackbar
 
-<MudOverlay DarkBackground bind-Visible="@_loading">
-    <MudProgressCircular Indeterminate Color="Color.Primary"></MudProgressCircular>
-</MudOverlay>
+
 <MudCard>
     <MudCardContent>
         <MudText Typo="Typo.h5">Enter your campaign code</MudText>
         <MudGrid>
-            <MudItem xs="7">
-                <MudTextField Immediate @bind-Value="_campaignCode" @bind-Value:after="() => SearchCampaign(_campaignCode)" Placeholder="odfzgpmfbqj" MaxLength="10"></MudTextField>
+            <MudItem xs="12" md="7">
+                <MudCodeInput Variant="Variant.Outlined"
+                              Margin="Margin.Dense"
+                              @bind-Value="_campaignCode"
+                              @bind-Value:after="() => SearchCampaign(_campaignCode)"
+                              Count="10"
+                              Spacing="1"
+                              ></MudCodeInput>
             </MudItem>
-            <MudItem xs="5">
-                <MudLoadingButton Disabled="_campaignCode == null" OnClick="() => SearchCampaign(_campaignCode)">Search</MudLoadingButton>
+            <MudItem xs="12" md="5">
+                <MudLoadingButton Variant="Variant.Filled" FullWidth Disabled="@(_campaignCode?.Length != 10)" OnClick="() => SearchCampaign(_campaignCode)">Search</MudLoadingButton>
             </MudItem>
         </MudGrid>
         <MudDivider Style="margin-top: 0.5rem; margin-bottom: 0.5rem" DividerType="DividerType.FullWidth"></MudDivider>
@@ -30,6 +35,9 @@
     </MudCardContent>
 </MudCard>
 
+<MudOverlay DarkBackground @bind-Visible="@_loading">
+    <MudProgressCircular Indeterminate Color="Color.Primary"></MudProgressCircular>
+</MudOverlay>
 
 
 
@@ -37,6 +45,9 @@
     private string? _campaignCode;
     private string _newCampaignName = "Season of Ghosts";
     private bool _loading;
+    
+    [SupplyParameterFromQuery(Name = "code")]
+    public string? QueryCode { get; set; }
 
     [Parameter]
     public Campaign? SelectedCampaign { get; set; }
@@ -51,11 +62,24 @@
         {
             return;
         }
+
+        if (QueryCode is not null)
+        {
+            _campaignCode = QueryCode;
+        }
+        await SearchCampaign(QueryCode);
+        if (SelectedCampaign is not null)
+        {
+            return;
+        }
+        
         var lastCampaign = await LocalStorage.GetAsync<CampaignId>(StorageKeys.LastCampaignId);
         if (lastCampaign.Success)
         {
             await using var context = await DbFactory.CreateDbContextAsync();
+            _loading = true;
             SelectedCampaign = await context.Campaigns.FindAsync(lastCampaign.Value);
+            _loading = false;
             await OnSelectedCampaignChanged();
         }
     }
@@ -80,8 +104,12 @@
         await using var context = await DbFactory.CreateDbContextAsync();
         SelectedCampaign = await context
             .Campaigns
-            .Where(x => x.Code == code)
+            .Where(x => x.Code == code.ToLower())
             .FirstOrDefaultAsync();
+        if (SelectedCampaign is null)
+        {
+            Snackbar.Add("Campaign not found", Severity.Warning);
+        }
         await OnSelectedCampaignChanged();
         _loading = false;
     }
