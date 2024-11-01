@@ -1,5 +1,6 @@
 @page "/characters/{id:int}"
 @using Microsoft.EntityFrameworkCore
+@using SeasonOfGhosts.Core
 @using SeasonOfGhosts.Core.Campaigns
 @using SeasonOfGhosts.Core.Characters
 @using SeasonOfGhosts.Core.Factions
@@ -19,7 +20,13 @@
                     <AttitudeSelect @bind-Character="_character"></AttitudeSelect>
                 </MudItem>
                 <MudItem xs="6">
-                    <MudText Typo="Typo.subtitle1">@_character.ShortDescription</MudText>
+                    <MudNumericField Value="_character.Influence"
+                                     Adornment="Adornment.End"
+                                     AdornmentIcon="@Icons.Material.Filled.Edit"
+                                     OnAdornmentClick="() => AdjustInfluenceAsync(_character)"
+                                     HideSpinButtons
+                                     ReadOnly
+                                     Label="Influence"></MudNumericField>
                 </MudItem>
                 <MudItem xs="6">
                     <MudStack Row AlignItems="AlignItems.Center" Justify="Justify.FlexEnd">
@@ -29,6 +36,9 @@
                         }
                     </MudStack>
                 </MudItem>
+                <MudItem xs="12">
+                    <MudText Typo="Typo.subtitle1">@_character.ShortDescription</MudText>
+                </MudItem>
                 @foreach (var log in _character.Log.OrderByDescending(x => x.CreatedAt).Take(_logCount))
                 {
                     <MudItem xs="12">
@@ -36,7 +46,15 @@
                             <MudCardContent>
                                 <MudGrid>
                                     <MudItem xs="5">@log.Reason</MudItem>
-                                    <MudItem xs="3">@log.NewAttitude</MudItem>
+                                    @switch (log)
+                                    {
+                                        case CharacterAttitudeLog attitudeLog:
+                                            <MudItem xs="3">@attitudeLog.NewAttitude</MudItem>
+                                            break;
+                                        case CharacterInfluenceLog influenceLog:
+                                            <MudItem xs="3">@influenceLog.Delta</MudItem>
+                                            break;
+                                    }
                                     <MudItem xs="4">@log.CreatedAt.ToString("yyyy-M-d")</MudItem>
                                 </MudGrid>
                             </MudCardContent>
@@ -60,7 +78,6 @@
             <MudForm @ref="@_editForm">
                 <MudTextField Label="Name" @bind-Value="_character.Name"></MudTextField>
                 <MudTextField Label="Title / Profession" @bind-Value="_character.ShortDescription"></MudTextField>
-                <MudTextField Label="Description" @bind-Value="_character.Description" AutoGrow MaxLength="100"></MudTextField>
                 <MudAutocomplete ValueChanged="@(faction => _character.Factions.Add(faction))" Label="Add Faction" ShowProgressIndicator ToStringFunc="x => x.Name" T="Faction" SearchFunc="SearchFaction"></MudAutocomplete>
             </MudForm>
         </DialogContent>
@@ -174,6 +191,19 @@ else
         Context.Remove(_character);
         await Context.SaveChangesAsync();
         NavManager.NavigateTo(AppRoutes.Characters);
+    }
+
+    private async Task AdjustInfluenceAsync(Character character)
+    {
+        var dialog = await DialogService.ShowAsync<AdjustSelect>();
+        var result = await dialog.Result;
+        
+        if (result?.Data is not Adjustment adjustment)
+        {
+            return;
+        }
+
+        await character.ChangeInfluence(adjustment, Context);
     }
 
 }

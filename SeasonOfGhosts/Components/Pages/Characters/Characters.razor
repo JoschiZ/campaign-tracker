@@ -1,9 +1,11 @@
 @page "/characters"
 @using Microsoft.EntityFrameworkCore
+@using SeasonOfGhosts.Core
 @using SeasonOfGhosts.Core.Campaigns
 @using SeasonOfGhosts.Core.Characters
 @using SeasonOfGhosts.Core.Factions
 @inherits UnitOfWorkComponentBase
+@inject IDialogService DialogService
 <PageTitle>Characters</PageTitle>
 
 <MudGrid>
@@ -18,14 +20,23 @@
                     <MudGrid>
                         <MudItem xs="7"><MudButton Variant="Variant.Text" Href="@AppRoutes.GetCharacterPage(character.Id)">@character.Name</MudButton></MudItem>
                         <MudItem xs="5"><AttitudeSelect Character="character"></AttitudeSelect></MudItem>
-                        <MudItem xs="12">
+                        <MudItem xs="9">
                             <MudStack Row>
                                 <MudTextField Margin="Margin.Dense" Variant="Variant.Filled" Underline="false" ReadOnly Value="@character.ShortDescription"></MudTextField>
                                 @foreach (var faction in character.Factions)
                                 {
-                                <MudChip T="Faction" Value="faction">@faction.Name</MudChip>
+                                    <MudChip T="Faction" Value="faction">@faction.Name</MudChip>
                                 }
                             </MudStack>
+                        </MudItem>
+                        <MudItem xs="3">
+                            <MudNumericField Value="character.Influence"
+                                             Adornment="Adornment.End"
+                                             AdornmentIcon="@Icons.Material.Filled.Edit"
+                                             OnAdornmentClick="() => AdjustInfluenceAsync(character)"
+                                             HideSpinButtons
+                                             ReadOnly
+                                             Label="Influence"></MudNumericField>
                         </MudItem>
                     </MudGrid>
                 </MudCardContent>
@@ -50,8 +61,7 @@
         <MudForm>
             <MudTextField @bind-Value="@_model.Name" Label="Name"></MudTextField>
             <MudTextField @bind-Value="@_model.ShortDescription" Label="Title/Profession"></MudTextField>
-            <MudTextField @bind-Value="@_model.Description" Label="Description"></MudTextField>
-            <MudTextField @bind-Value="@_model.Ancestry" Label="Ancestry"></MudTextField>
+            <MudNumericField @bind-Value="@_model.Influence" Label="Influence"></MudNumericField>
             <MudSelect @bind-Value="@_model.StartingAttitude" T="Attitude">
                 <MudSelectItem Value="Attitude.Hostile">
                     <MudText Color="Color.Error">@Attitude.Hostile</MudText>
@@ -136,22 +146,15 @@
             return;
         }
         
-        var character = new Character()
+        var character = new Character(_model.Influence, _model.StartingAttitude)
         {
             Name = _model.Name,
-            Ancestry = _model.Ancestry,
             ShortDescription = _model.ShortDescription,
-            Description = _model.Description,
             Factions = _model.Factions.ToList(),
-            Campaign = campaign
+            Campaign = campaign,
         };
 
         campaign.Characters.Add(character);
-        
-        if (_model.StartingAttitude != character.Attitude)
-        {
-            await character.ChangeAttitudeAsync(_model.StartingAttitude, "Starting Attitude", Context);
-        }
 
         await Context.SaveChangesAsync();
             
@@ -162,12 +165,24 @@
     private class CreateCharacterModel
     {
         public string Name { get; set; } = "";
-        public string Ancestry { get; set; } = "";
-        public string Description { get; set; } = "";
         public string ShortDescription { get; set; } = "";
         public Attitude StartingAttitude { get; set; }
+        public int Influence { get; set; }
         public IEnumerable<Faction> Factions { get; set; } = [];
 
+    }
+
+    private async Task AdjustInfluenceAsync(Character character)
+    {
+        var dialog = await DialogService.ShowAsync<AdjustSelect>();
+        var result = await dialog.Result;
+        
+        if (result?.Data is not Adjustment adjustment)
+        {
+            return;
+        }
+
+        await character.ChangeInfluence(adjustment, Context);
     }
 
 }
