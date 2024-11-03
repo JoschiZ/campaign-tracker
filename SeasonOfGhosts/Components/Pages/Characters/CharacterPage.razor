@@ -42,35 +42,14 @@
                 <MudItem xs="12">
                     <MudDivider></MudDivider>
                     <MudText Typo="Typo.h5">History</MudText>
+                    <LogsDisplay LogEntries="@(Context?
+                        .Campaigns
+                        .Where(x => x.Id == CampaignId)
+                        .SelectMany(x => x.Characters)
+                        .Where(x => x.Id == _character.Id)
+                        .SelectMany(x => x.Log))">
+                    </LogsDisplay>
                 </MudItem>
-                @foreach (var log in _character.Log.OrderByDescending(x => x.CreatedAt).Take(_logCount))
-                {
-                    <MudItem xs="12">
-                        <MudCard Outlined>
-                            <MudCardContent>
-                                <MudGrid>
-                                    <MudItem xs="5">@log.Reason</MudItem>
-                                    @switch (log)
-                                    {
-                                        case CharacterAttitudeLog attitudeLog:
-                                            <MudItem xs="3">@attitudeLog.NewValue</MudItem>
-                                            break;
-                                        case CharacterInfluenceLog influenceLog:
-                                            <MudItem xs="3">@influenceLog.Delta</MudItem>
-                                            break;
-                                    }
-                                    <MudItem xs="4">@log.CreatedAt.ToString("yyyy-M-d")</MudItem>
-                                </MudGrid>
-                            </MudCardContent>
-                        </MudCard>
-                    </MudItem>
-                }
-                @if (_character.Log.Count > _logCount)
-                {
-                    <MudItem xs="12">
-                        <MudButton FullWidth Color="Color.Primary" Variant="Variant.Filled" OnClick="() => _logCount += 4">Load More</MudButton>
-                    </MudItem>   
-                }
             </MudGrid>
         </MudCardContent>
         <MudCardActions>
@@ -113,18 +92,17 @@ else
 
     private Character? _character;
     private bool _notFound;
-    private int _logCount = 4;
 
     protected override async Task OnInitializedAsync()
     {
         await base.OnInitializedAsync();
         _character = await Context
             .Campaigns
+            .AsSplitQuery()
             .Where(x => x.Id == CampaignId)
             .SelectMany(x => x.Characters)
             .Where(x => x.Id == new CharacterId(Id))
             .Include(x => x.Factions)
-            .Include(x => x.Log)
             .FirstOrDefaultAsync();
         _notFound = _character is null;
     }

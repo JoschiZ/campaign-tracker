@@ -1,0 +1,34 @@
+@using SeasonOfGhosts.Core
+@using SeasonOfGhosts.Core.Characters
+
+
+<MudCard Outlined>
+    <MudCardContent>
+        <MudGrid>
+            <MudItem xs="5">@LogEntry.Reason</MudItem>
+            @switch (LogEntry)
+            {
+                case ILogEntry<Attitude> logEntry:
+                    <MudItem xs="3">@logEntry.NewValue</MudItem>
+                    break;
+                case IDeltaLogEntry deltaLog:
+                    <MudItem xs="3">
+                        @if (deltaLog.Delta > 0)
+                        {
+                            <MudText Color="Color.Success">@deltaLog.Delta</MudText>
+                        }
+                        else
+                        {
+                            <MudText Color="Color.Error">-@deltaLog.Delta</MudText>
+                        }
+                    </MudItem>
+                    break;
+            }
+            <MudItem xs="4">@LogEntry.CreatedAt.ToString("yyyy-M-d")</MudItem>
+        </MudGrid>
+    </MudCardContent>
+</MudCard>
+
+@code {
+    [Parameter, EditorRequired] public required ILogEntry LogEntry { get; set; }
+}

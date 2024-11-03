@@ -1,0 +1,61 @@
+@using Microsoft.EntityFrameworkCore
+@using SeasonOfGhosts.Core
+
+<MudGrid Spacing="1">
+    @foreach (var log in _fetchedEntries)
+    {
+        <MudItem xs="12">
+            <LogRow LogEntry="log"></LogRow>
+        </MudItem>
+    }
+    @if (!_noMoreLogs)
+    {
+        <MudItem xs="12">
+            <MudLoadingButton FullWidth Variant="Variant.Filled" Color="Color.Primary" OnClick="GetNextEntries">Load More</MudLoadingButton>
+        </MudItem>
+    }
+</MudGrid>
+
+@code {
+    [Parameter, EditorRequired]
+    public required IQueryable<ILogEntry> LogEntries { get; set; }
+
+    private IOrderedQueryable<ILogEntry>? _orderedQueryable;
+    private readonly List<ILogEntry> _fetchedEntries = [];
+    
+    /// <summary>
+    /// The number of logs to load at a time.
+    /// </summary>
+    [Parameter]
+    public int PageSize { get; set; } = 4;
+
+    private bool _noMoreLogs;
+    
+    protected override async Task OnInitializedAsync()
+    {
+        _orderedQueryable = LogEntries.OrderByDescending(x => x.CreatedAt);
+        await GetNextEntries();
+        await base.OnInitializedAsync();
+    }
+
+    private async Task GetNextEntries()
+    {
+        if (_noMoreLogs || _orderedQueryable is null)
+        {
+            _noMoreLogs = true;
+            return;
+        }
+        var logs = await _orderedQueryable
+            .AsNoTrackingWithIdentityResolution()
+            .Skip(_fetchedEntries.Count)
+            .Take(PageSize)
+            .ToArrayAsync();
+        if (logs.Length < PageSize)
+        {
+            _noMoreLogs = true;
+        }
+        
+        _fetchedEntries.AddRange(logs);
+    }
+
+}
