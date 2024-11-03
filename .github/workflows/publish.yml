@@ -24,9 +24,6 @@ jobs:
       - name: Publish .NET application
         run: dotnet publish -c Release -o ./output
 
-      - name: Start SSH agent
-        run: eval "$(ssh-agent -s)"
-
       - name: Stop service on remote server
         env:
           SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
@@ -37,30 +34,28 @@ jobs:
         run: |
           echo "$SSH_PRIVATE_KEY" > private_key
           chmod 600 private_key
-          echo "$SSH_PASSPHRASE" | ssh-add private_key
-          ssh -o StrictHostKeyChecking=no $SERVER_USER@$SERVER_HOST "sudo systemctl stop $SERVICE_NAME"
+          # Use the private key directly with the ssh command
+          ssh -o StrictHostKeyChecking=no -i private_key $SERVER_USER@$SERVER_HOST "sudo systemctl stop $SERVICE_NAME"
 
       - name: Copy build output to remote server
         env:
           SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
-          SSH_PASSPHRASE: ${{ secrets.SSH_PASSPHRASE }}
           SERVER_USER: ${{ secrets.SERVER_USER }}
           SERVER_HOST: ${{ secrets.SERVER_HOST }}
         run: |
           echo "$SSH_PRIVATE_KEY" > private_key
           chmod 600 private_key
-          echo "$SSH_PASSPHRASE" | ssh-add private_key
-          scp -o StrictHostKeyChecking=no -r ./output/* $SERVER_USER@$SERVER_HOST:/var/www/spot_ubuntu/
+          # Use the private key directly with the scp command
+          scp -o StrictHostKeyChecking=no -i private_key -r ./output/* $SERVER_USER@$SERVER_HOST:/var/www/spot_ubuntu/
 
       - name: Start service on remote server
         env:
           SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
-          SSH_PASSPHRASE: ${{ secrets.SSH_PASSPHRASE }}
           SERVER_USER: ${{ secrets.SERVER_USER }}
           SERVER_HOST: ${{ secrets.SERVER_HOST }}
           SERVICE_NAME: season-of-ghosts.service
         run: |
           echo "$SSH_PRIVATE_KEY" > private_key
           chmod 600 private_key
-          echo "$SSH_PASSPHRASE" | ssh-add private_key
-          ssh -o StrictHostKeyChecking=no $SERVER_USER@$SERVER_HOST "sudo systemctl start $SERVICE_NAME"
+          # Use the private key directly with the ssh command
+          ssh -o StrictHostKeyChecking=no -i private_key $SERVER_USER@$SERVER_HOST "sudo systemctl start $SERVICE_NAME"
