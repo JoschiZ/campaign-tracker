@@ -47,6 +47,13 @@ if (!app.Environment.IsDevelopment())
     app.UseHsts();
 }
 
+// Automatically migrate the production database on startup
+if (app.Environment.IsProduction())
+{
+    await using var dbContext = app.Services.GetRequiredService<SeasonContext>();
+    await dbContext.Database.MigrateAsync();
+}
+
 app.UseHttpsRedirection();
 
 app.UseStaticFiles();
