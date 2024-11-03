@@ -24,6 +24,9 @@ jobs:
       - name: Publish .NET application
         run: dotnet publish -c Release -o ./output
 
+      - name: Start SSH agent
+        run: eval "$(ssh-agent -s)"
+
       - name: Stop service on remote server
         env:
           SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
