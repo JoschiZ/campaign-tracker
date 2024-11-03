@@ -2,7 +2,7 @@ using SeasonOfGhosts.Db;
 
 namespace SeasonOfGhosts.Core.Settlements;
 
-public abstract class SettlementLog : ICreationTracking
+public abstract class SettlementLog : IDeltaLogEntry
 {
     public SettlementLogId Id { get; private init; }
     public required string Reason { get; init; }

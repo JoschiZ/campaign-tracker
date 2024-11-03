@@ -3,7 +3,6 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using SeasonOfGhosts.Core.Campaigns;
 using SeasonOfGhosts.Core.Factions;
 using SeasonOfGhosts.Db;
-using StronglyTypedIds;
 
 namespace SeasonOfGhosts.Core.Characters;
 
@@ -38,7 +37,7 @@ public sealed class Character
         var log = new CharacterAttitudeLog()
         {
             Character = character,
-            NewAttitude = newAttitude,
+            NewValue = newAttitude,
             Reason = reason,
         };
         
@@ -80,25 +79,4 @@ public sealed class CharacterLogConfiguration : IEntityTypeConfiguration<Charact
             .HasValue<CharacterAttitudeLog>("attitude")
             .HasValue<CharacterInfluenceLog>("influence");
     }
-}
-
-[StronglyTypedId]
-public readonly partial struct CharacterLogId;
-
-public abstract class CharacterLog : ICreationTracking
-{
-    public CharacterLogId Id { get; private init; }
-    public required string Reason { get; init; }
-    public required Character Character { get; init; }
-    public DateTime CreatedAt { get; private init; }
-}
-
-public sealed class CharacterAttitudeLog : CharacterLog
-{
-    public required Attitude NewAttitude { get; init; }
-}
-
-public sealed class CharacterInfluenceLog : CharacterLog
-{
-    public required int Delta { get; init; }
 }

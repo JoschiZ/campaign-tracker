@@ -1,8 +1,6 @@
-using SeasonOfGhosts.Db;
-
 namespace SeasonOfGhosts.Core.Factions;
 
-public sealed class FactionLog : ICreationTracking
+public sealed class FactionLog : IDeltaLogEntry
 {
     public FactionLogId Id { get; private init; }
     public required string Reason { get; init; }
