@@ -19,7 +19,7 @@ public sealed class SeasonContext : DbContext
         optionsBuilder.EnableDetailedErrors();
 #endif
         
-        optionsBuilder.AddInterceptors([new CreationInterceptor()]);
+        optionsBuilder.AddInterceptors([new CreationInterceptor(), new UpdateInterceptor()]);
         base.OnConfiguring(optionsBuilder);
     }
 

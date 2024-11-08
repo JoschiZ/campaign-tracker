@@ -7,13 +7,14 @@ using StronglyTypedIds;
 
 namespace SeasonOfGhosts.Core.Stats;
 
-public sealed class Stat
+public sealed class Stat : IUpdateTracking
 {
     public StatId Id { get; init; }
     public required string Name { get; init; }
     public int Value { get; private set; }
     public required Campaign Campaign { get; init; }
     public List<StatLog> Log { get; init; } = [];
+    public DateTime UpdatedAt { get; private init; }
 
     public async Task<StatLog?> ChangeStatAsync(int delta, string reason, SeasonContext context)
     {

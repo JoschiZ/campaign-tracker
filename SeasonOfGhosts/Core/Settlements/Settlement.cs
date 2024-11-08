@@ -3,7 +3,7 @@ using SeasonOfGhosts.Db;
 
 namespace SeasonOfGhosts.Core.Settlements;
 
-public sealed class Settlement
+public sealed class Settlement : IUpdateTracking
 {
     private Settlement(){}
 
@@ -19,6 +19,7 @@ public sealed class Settlement
     public int Level { get; private set; }
     public int Population { get; private set; }
     public List<SettlementLog> Log { get; init; } = [];
+    public DateTime UpdatedAt { get; private init; }
 
     public async Task<SettlementLevelLog?> AdjustLevelAsync(Adjustment adjustment, SeasonContext seasonContext)
     {

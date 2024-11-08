@@ -6,7 +6,7 @@ using SeasonOfGhosts.Db;
 
 namespace SeasonOfGhosts.Core.Characters;
 
-public sealed class Character
+public sealed class Character : IUpdateTracking
 {
     public Character(){}
 
@@ -28,6 +28,7 @@ public sealed class Character
     public required Campaign Campaign { get; init; }
     public List<Faction> Factions { get; init; } = [];
     public List<CharacterLog> Log { get; init; } = [];
+    public DateTime UpdatedAt { get; private init; }
     
     
     public async Task<CharacterAttitudeLog> ChangeAttitudeAsync(Attitude newAttitude, string reason, SeasonContext context)

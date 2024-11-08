@@ -3,10 +3,11 @@ using SeasonOfGhosts.Core.Characters;
 using SeasonOfGhosts.Core.Factions;
 using SeasonOfGhosts.Core.Settlements;
 using SeasonOfGhosts.Core.Stats;
+using SeasonOfGhosts.Db;
 
 namespace SeasonOfGhosts.Core.Campaigns;
 
-public sealed class Campaign
+public sealed class Campaign : IUpdateTracking
 {
     public CampaignId Id { get; init; }
     public Season CurrentSeason { get; set; } = Season.Summer;
@@ -20,4 +21,5 @@ public sealed class Campaign
     public List<Faction> Factions { get; set; } = [];
     public Settlement? MainSettlement { get; set; }
 
+    public DateTime UpdatedAt { get; private init; }
 }
