@@ -9,7 +9,7 @@
         <MudCardContent>
             <MudGrid>
                 <MudItem xs="7">
-                    <MudText Typo="Typo.subtitle1">@Stat.Name</MudText>
+                    <MudText Typo="Typo.subtitle1"><MudButton Variant="Variant.Text" Href="@AppRoutes.GetStatPage(Stat.Id)">@Stat.Name</MudButton></MudText>
                 </MudItem>
                 <MudItem xs="5">
                     <MudNumericField Value="Stat.Value"
