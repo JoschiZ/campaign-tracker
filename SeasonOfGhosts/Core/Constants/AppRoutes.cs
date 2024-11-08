@@ -1,4 +1,5 @@
 using SeasonOfGhosts.Core.Characters;
+using SeasonOfGhosts.Core.Stats;
 
 namespace SeasonOfGhosts.Core.Constants;
 
@@ -12,4 +13,7 @@ public static class AppRoutes
 
     public const string CharacterPage = "/characters/{id}";
     public static string GetCharacterPage(CharacterId id) => $"/characters/{id}";
+    
+    public const string StatPage = "/stats/{id:int}";
+    public static string GetStatPage(StatId id) => $"/stats/{id}";
 }

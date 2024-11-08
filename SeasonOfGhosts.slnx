@@ -1,0 +1,9 @@
+﻿<Solution>
+  <Folder Name="/SolutionFiles/">
+    <File Path=".gitignore" />
+    <File Path="LICENCE.md" />
+    <File Path="README.md" />
+  </Folder>
+  <Project Path="SeasonOfGhosts.Tests\SeasonOfGhosts.Tests.csproj" Type="Classic C#" />
+  <Project Path="SeasonOfGhosts\SeasonOfGhosts.csproj" Type="Classic C#" />
+</Solution>

@@ -37,6 +37,9 @@ public sealed class Stat
 
         return log;
     }
+
+    public Task ChangeStatAsync(Adjustment adjustment, SeasonContext context)
+        => ChangeStatAsync(adjustment.Delta, adjustment.Reason, context); 
 }
 
 public sealed class StatConfiguration: IEntityTypeConfiguration<Stat>

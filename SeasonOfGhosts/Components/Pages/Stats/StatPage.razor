@@ -1,0 +1,103 @@
+﻿@attribute [Route(AppRoutes.StatPage)]
+@using Microsoft.EntityFrameworkCore
+@using SeasonOfGhosts.Core
+@using SeasonOfGhosts.Core.Campaigns
+@using SeasonOfGhosts.Core.Stats
+@inherits UnitOfWorkComponentBase
+@inject IDialogService DialogService
+@inject NavigationManager NavManager
+
+@if (_stat is not null)
+{
+    <MudCard>
+        <MudCardContent>
+            <MudGrid>
+                <MudItem xs="7">
+                    <MudText>@_stat.Name</MudText>
+                </MudItem>
+                <MudItem xs="5">
+                    <MudNumericField Value="_stat.Value"
+                                     Adornment="Adornment.End"
+                                     AdornmentIcon="@Icons.Material.Filled.Edit"
+                                     OnAdornmentClick="() => AdjustStatAsync(_stat)"
+                                     HideSpinButtons
+                                     ReadOnly
+                                     Label="Value"></MudNumericField>
+                </MudItem>
+                <MudItem xs="12">
+                    <MudDivider></MudDivider>
+                    <MudText Typo="Typo.h5">History</MudText>
+                    <LogsDisplay LogEntries="@(Context?.Campaigns.Where(x => x.Id == CampaignId).SelectMany(x => x.Stats).Where(x => x.Id == _stat.Id).SelectMany(x => x.Log))">
+                    </LogsDisplay>
+                </MudItem>
+            </MudGrid>
+        </MudCardContent>
+        <MudCardActions>
+            <MudLoadingButton
+                Variant="Variant.Filled"
+                Color="Color.Error"
+                OnClick="() => DeleteStatAsync(_stat)">Delete</MudLoadingButton>
+        </MudCardActions>
+    </MudCard>
+    
+    
+} else if (_notFound)
+{
+    <NotFoundDisplay></NotFoundDisplay>
+}
+else
+{
+    <MudProgressCircular Color="Color.Primary" Size="Size.Large" Indeterminate></MudProgressCircular>
+}
+
+
+@code {
+    [Parameter]
+    public required int Id { get; set; }
+    [CascadingParameter]
+    public required CampaignId CampaignId { get; set; }
+    
+    private Stat? _stat;
+    private bool _notFound;
+    
+    protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+        _stat = await Context
+            .Campaigns
+            .Where(x => x.Id == CampaignId)
+            .SelectMany(x => x.Stats)
+            .FirstOrDefaultAsync(x => x.Id == new StatId(Id));
+        _notFound = _stat is null;
+
+    }
+
+    private async Task AdjustStatAsync(Stat stat)
+    {
+        var dialog = await DialogService.ShowAsync<AdjustSelect>();
+        var result = await dialog.Result;
+        
+        if (result?.Data is not Adjustment adjustment)
+        {
+            return;
+        }
+
+        await stat.ChangeStatAsync(adjustment, Context);
+    }
+
+    private async Task DeleteStatAsync(Stat stat)
+    {
+        var dialog = await DialogService.ShowAsync<ConfirmDialog>();
+        var result = await dialog.Result;
+
+        if (result is not {Canceled: false})
+        {
+            return;
+        }
+        
+        Context.Remove(stat);
+        await Context.SaveChangesAsync();
+        NavManager.NavigateTo(AppRoutes.Stats);
+    }
+
+}
