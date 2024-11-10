@@ -5,7 +5,7 @@
     </TitleContent>
     <DialogContent>
         <MudStack Justify="Justify.Center" AlignItems="AlignItems.Center">
-            <MudText Color="Color.Primary">@_amount</MudText>
+            <MudNumericField Variant="Variant.Outlined" @bind-Value="@_amount"></MudNumericField>
             <MudSlider ValueLabel  Step="1" Min="@Min" Max="@Max" @bind-Value="@_amount"></MudSlider>
             <MudTextField Immediate @bind-Value="@_reason" MaxLength="50" Label="Reason"></MudTextField>    
         </MudStack>
