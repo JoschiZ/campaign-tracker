@@ -77,12 +77,20 @@
         
         if (await LocalStorage.ContainKeyAsync(StorageKeys.LastCampaignId))
         {
-            var lastCampaign = await LocalStorage.GetItemAsync<CampaignId>(StorageKeys.LastCampaignId);
-            await using var context = await DbFactory.CreateDbContextAsync();
-            _loading = true;
-            SelectedCampaign = await context.Campaigns.FindAsync(lastCampaign);
-            _loading = false;
-            await OnSelectedCampaignChanged();
+            try
+            {
+                var lastCampaign = await LocalStorage.GetItemAsync<CampaignId>(StorageKeys.LastCampaignId);
+                await using var context = await DbFactory.CreateDbContextAsync();
+                _loading = true;
+                SelectedCampaign = await context.Campaigns.FindAsync(lastCampaign);
+                _loading = false;
+                await OnSelectedCampaignChanged();
+            }
+            catch (Exception)
+            {
+                await LocalStorage.RemoveItemAsync(StorageKeys.LastCampaignId);
+            }
+
         }
     }
 
