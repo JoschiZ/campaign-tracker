@@ -7,12 +7,12 @@
         <MudStack Justify="Justify.Center" AlignItems="AlignItems.Center">
             <MudNumericField Variant="Variant.Outlined" @bind-Value="@_amount"></MudNumericField>
             <MudSlider ValueLabel  Step="1" Min="@Min" Max="@Max" @bind-Value="@_amount"></MudSlider>
-            <MudTextField Immediate @bind-Value="@_reason" MaxLength="50" Label="Reason"></MudTextField>    
+            <MudTextField Counter="50" Immediate @bind-Value="@_reason" MaxLength="50" Label="Reason" Error="@(_reason.Length < 4)" ErrorText="The reason must have at least 4 characters"></MudTextField>
         </MudStack>
     </DialogContent>
     <DialogActions>
         <MudButton Variant="Variant.Filled" Color="Color.Warning" OnClick="Cancel">Cancel</MudButton>
-        <MudButton Disabled="_reason.Length < 5" Variant="Variant.Filled" Color="Color.Success" OnClick="Submit">Save</MudButton>
+        <MudButton Disabled="_reason.Length < 4" Variant="Variant.Filled" Color="Color.Success" OnClick="Submit">Save</MudButton>
     </DialogActions>
 </MudDialog>
 
