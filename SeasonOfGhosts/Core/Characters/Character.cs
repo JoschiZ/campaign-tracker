@@ -33,36 +33,32 @@ public sealed class Character : IUpdateTracking
     
     public async Task<CharacterAttitudeLog> ChangeAttitudeAsync(Attitude newAttitude, string reason, SeasonContext context)
     {
-        var character = await context.FindAsync<Character>(Id);
-
         var log = new CharacterAttitudeLog()
         {
-            Character = character,
+            Character = this,
             NewValue = newAttitude,
             Reason = reason,
         };
         
-        character.Log.Add(log);
-        character.Attitude = newAttitude;
-        
+        Log.Add(log);
+        Attitude = newAttitude;
+        context.Update(this);
         await context.SaveChangesAsync();
         return log;
     }
 
     public async Task<CharacterInfluenceLog> ChangeInfluence(Adjustment adjustment, SeasonContext context)
     {
-        var character = await context.FindAsync<Character>(Id);
-
         var log = new CharacterInfluenceLog()
         {
-            Character = character,
+            Character = this,
             Delta = adjustment.Delta,
             Reason = adjustment.Reason,
         };
         
-        character.Log.Add(log);
-        character.Influence += adjustment.Delta;
-        
+        Log.Add(log);
+        Influence += adjustment.Delta;
+        context.Update(this);
         await context.SaveChangesAsync();
         return log;
     }

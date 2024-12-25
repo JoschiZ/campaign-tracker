@@ -17,23 +17,17 @@ public sealed class Faction : IUpdateTracking
     
     public async Task<FactionLog?> ChangeReputationAsync(int delta, string reason, SeasonContext context)
     {
-        var faction = await context.FindAsync<Faction>(Id);
-
-        if (faction is null)
-        {
-            return null;
-        }
         
         var log = new FactionLog()
         {
             Delta = delta,
             Reason = reason,
-            Faction = faction
+            Faction = this
         };
         
         Reputation += delta;
         Log.Add(log);
-        
+        context.Update(this);
         await context.SaveChangesAsync();
         return log;
     }

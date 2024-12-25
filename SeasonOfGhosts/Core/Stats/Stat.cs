@@ -18,22 +18,16 @@ public sealed class Stat : IUpdateTracking
 
     public async Task<StatLog?> ChangeStatAsync(int delta, string reason, SeasonContext context)
     {
-        var stat = await context.FindAsync<Stat>(Id);
-        if (stat is null)
-        {
-            return null;
-        }
         var log = new StatLog()
         {
             Delta = delta,
             Reason = reason,
-            Stat = stat
+            Stat = this
         };
-        
         
         Value += delta;
         Log.Add(log);
-        
+        context.Update(this);
         await context.SaveChangesAsync();
 
         return log;
