@@ -42,7 +42,6 @@ public sealed class Character : IUpdateTracking
         
         Log.Add(log);
         Attitude = newAttitude;
-        context.Update(this);
         await context.SaveChangesAsync();
         return log;
     }
@@ -58,7 +57,6 @@ public sealed class Character : IUpdateTracking
         
         Log.Add(log);
         Influence += adjustment.Delta;
-        context.Update(this);
         await context.SaveChangesAsync();
         return log;
     }

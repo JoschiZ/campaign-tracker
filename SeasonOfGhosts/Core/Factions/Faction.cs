@@ -27,7 +27,6 @@ public sealed class Faction : IUpdateTracking
         
         Reputation += delta;
         Log.Add(log);
-        context.Update(this);
         await context.SaveChangesAsync();
         return log;
     }

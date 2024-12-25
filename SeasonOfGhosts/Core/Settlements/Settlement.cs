@@ -52,7 +52,6 @@ public sealed class Settlement : IUpdateTracking
         };
         
         Log.Add(log);
-        seasonContext.Update(this);
         await seasonContext.SaveChangesAsync();
 
         return log;
