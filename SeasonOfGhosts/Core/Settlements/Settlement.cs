@@ -23,44 +23,36 @@ public sealed class Settlement : IUpdateTracking
 
     public async Task<SettlementLevelLog?> AdjustLevelAsync(Adjustment adjustment, SeasonContext seasonContext)
     {
-        var settlement = await seasonContext.FindAsync<Settlement>(Id);
-        if (settlement is null)
-        {
-            return null;
-        }
 
-        settlement.Level += adjustment.Delta;
+        Level += adjustment.Delta;
 
         var log = new SettlementLevelLog()
         {
-            Settlement = settlement,
+            Settlement = this,
             Delta = adjustment.Delta,
             Reason = adjustment.Reason
         };
         
-        settlement.Log.Add(log);
+        Log.Add(log);
+        seasonContext.Update(this);
         await seasonContext.SaveChangesAsync();
 
         return log;
     }
     public async Task<SettlementPopulationLog?> AdjustPopulationAsync(Adjustment adjustment, SeasonContext seasonContext)
     {
-        var settlement = await seasonContext.FindAsync<Settlement>(Id);
-        if (settlement is null)
-        {
-            return null;
-        }
 
-        settlement.Population += adjustment.Delta;
+        Population += adjustment.Delta;
 
         var log = new SettlementPopulationLog()
         {
-            Settlement = settlement,
+            Settlement = this,
             Delta = adjustment.Delta,
             Reason = adjustment.Reason
         };
         
-        settlement.Log.Add(log);
+        Log.Add(log);
+        seasonContext.Update(this);
         await seasonContext.SaveChangesAsync();
 
         return log;
