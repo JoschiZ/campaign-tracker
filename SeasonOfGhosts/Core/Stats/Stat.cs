@@ -27,7 +27,6 @@ public sealed class Stat : IUpdateTracking
         
         Value += delta;
         Log.Add(log);
-        context.Update(this);
         await context.SaveChangesAsync();
 
         return log;
