@@ -20,7 +20,7 @@ builder.Services.AddBlazoredLocalStorage();
 builder.Configuration
     .AddJsonFile("secret.appsettings.json", optional: true)
     .AddJsonFile($"secret.appsettings.{builder.Environment.EnvironmentName}.json", optional: true);
-
+builder.Configuration.AddEnvironmentVariables();
 
 // Add MudBlazor services
 builder.Services.AddMudServices(x =>
